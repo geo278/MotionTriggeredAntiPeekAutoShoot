@@ -6,8 +6,8 @@
 
 using namespace std;
 
-int width = 3;
-int height = 3;
+int width = 10;
+int height = 10;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -51,15 +51,29 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
 	// int tooBright = 230;
-	for (int i = 0; i < width * height; i++) {
-		prevRed = (int)prev[i].rgbRed;
-		prevGreen = (int)prev[i].rgbGreen;
-		prevBlue = (int)prev[i].rgbBlue;
-		currRed = (int)curr[i].rgbRed;
-		currGreen = (int)curr[i].rgbGreen;
-		currBlue = (int)curr[i].rgbBlue;
+	int tolerance = 20;
+	int x, y, index;
+	double radius = 5, angle = 0;
+	for (int i = 0; i < 2 * width; i++) {
+		if (i < width) {
+			x = i;
+			y = 0;
+		}
+		else if (i >= width) {
+			x = i - 10;
+			y = height - 1;
+		}
+		// angle += 2 * 3.141592654 / 16; // increment angle per iteration
+		index = y * width + x; // get 1d array index
 
-		if (abs(currRed - prevRed) > 25 || abs(currGreen - prevGreen) > 25 || abs(currBlue - prevBlue) > 25) {
+		prevRed = (int)prev[index].rgbRed;
+		prevGreen = (int)prev[index].rgbGreen;
+		prevBlue = (int)prev[index].rgbBlue;
+		currRed = (int)curr[index].rgbRed;
+		currGreen = (int)curr[index].rgbGreen;
+		currBlue = (int)curr[index].rgbBlue;
+
+		if (abs(currRed - prevRed) > tolerance || abs(currGreen - prevGreen) > tolerance || abs(currBlue - prevBlue) > tolerance) {
 			result = true;
 		}
 		/*
@@ -74,8 +88,12 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 
 void shoot() {
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
-	Sleep(100);
-	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click 
+	for (int i = 0; i < 10; i++) {
+		Sleep(20);
+		mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
+	}
+	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
+	Sleep(1);
 }
 
 void Aim() {
