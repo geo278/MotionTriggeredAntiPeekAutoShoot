@@ -50,10 +50,10 @@ RGBQUAD* scan(POINT a, POINT b) {
 bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
-	// int tooBright = 230;
 	int tolerance = 15;
 	int x, y, index;
-	double radius = 5, angle = 0;
+	// int tooBright = 230;
+
 	for (int i = 0; i < 2 * width; i++) {
 		if (i < width) {
 			x = i;
@@ -63,7 +63,6 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 			x = i - 10;
 			y = height - 1;
 		}
-		// angle += 2 * 3.141592654 / 16; // increment angle per iteration
 		index = y * width + x; // get 1d array index
 
 		prevRed = (int)prev[index].rgbRed;
@@ -106,15 +105,17 @@ void shoot() {
 	INPUT _0_keyUp = _0_keyDown;
 	_0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	
-	SendInput(1, &_0_keyDown, sizeof(INPUT));
-	for (int i = 0; i < 10; i++) {
+	SendInput(1, &_0_keyDown, sizeof(INPUT)); // begin burst
+	Sleep(10); // delay to prevent displacement of first shot
+	mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0); // additional dampening for first shot recoil
+	for (int i = 0; i < 9; i++) { // recoil compensation
 		Sleep(20);
 		mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
 	}
-	SendInput(1, &_0_keyUp, sizeof(INPUT));
+	SendInput(1, &_0_keyUp, sizeof(INPUT)); // end burst
 }
 
-void Aim() {
+void main() {
 	POINT a, b;
 	a.x = 1920 / 2 - width / 2;
 	a.y = 1080 / 2 - height / 2;
@@ -146,9 +147,4 @@ void Aim() {
 		}
 		Sleep(1);
 	}
-}
-
-int main() {
-	Aim();
-	return 0;
 }
