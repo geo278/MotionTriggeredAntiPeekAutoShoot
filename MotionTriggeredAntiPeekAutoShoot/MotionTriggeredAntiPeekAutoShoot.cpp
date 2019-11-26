@@ -6,6 +6,8 @@
 
 using namespace std;
 
+int screenWidth = GetSystemMetrics(SM_CXSCREEN);
+int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
 int height = 10;
 
@@ -15,15 +17,7 @@ RGBQUAD* scan(POINT a, POINT b) {
 	HDC     hDC = CreateCompatibleDC(hScreen);
 	HBITMAP hBitmap = CreateCompatibleBitmap(hScreen, abs(b.x - a.x), abs(b.y - a.y));
 	HGDIOBJ old_obj = SelectObject(hDC, hBitmap);
-	BOOL    bRet = BitBlt(hDC, 0, 0, abs(b.x - a.x), abs(b.y - a.y), hScreen, a.x, a.y, SRCCOPY); // BitBlt does the copying
-
-	/*
-	// save bitmap to clipboard
-	OpenClipboard(NULL);
-	EmptyClipboard();
-	SetClipboardData(CF_BITMAP, hBitmap);
-	CloseClipboard();
-	*/
+	BOOL    bRet = BitBlt(hDC, 0, 0, abs(b.x - a.x), abs(b.y - a.y), hScreen, a.x, a.y, SRCCOPY); // BitBlt performs copying
 
 	// Array conversion:
 	RGBQUAD* pixels = new RGBQUAD[width * height];
@@ -35,7 +29,7 @@ RGBQUAD* scan(POINT a, POINT b) {
 	bmi.biWidth = width;
 	bmi.biHeight = -height;
 	bmi.biCompression = BI_RGB;
-	bmi.biSizeImage = 0;// 3 * ScreenX * ScreenY;
+	bmi.biSizeImage = 0; // 3 * ScreenX * ScreenY;
 
 	GetDIBits(hDC, hBitmap, 0, height, pixels, (BITMAPINFO*)&bmi, DIB_RGB_COLORS);
 
@@ -55,12 +49,12 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 	// int tooBright = 230;
 
 	for (int i = 0; i < 2 * width; i++) {
-		if (i < width) {
+		if (i < width) { // check first row
 			x = i;
 			y = 0;
 		}
-		else if (i >= width) {
-			x = i - 10;
+		else if (i >= width) { // check last row
+			x = i - width;
 			y = height - 1;
 		}
 		index = y * width + x; // get 1d array index
@@ -117,10 +111,10 @@ void shoot() {
 
 void main() {
 	POINT a, b;
-	a.x = 1920 / 2 - width / 2;
-	a.y = 1080 / 2 - height / 2;
-	b.x = 1920 / 2 + width / 2;
-	b.y = 1080 / 2 + height / 2;
+	a.x = screenWidth / 2 - width / 2;
+	a.y = screenHeight / 2 - height / 2;
+	b.x = screenWidth / 2 + width / 2;
+	b.y = screenHeight / 2 + height / 2;
 
 	RGBQUAD* prev;
 	RGBQUAD* curr;
@@ -135,9 +129,9 @@ void main() {
 			while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
 				if (compare(prev, curr)){
+					shoot();
 					delete[] prev;
 					delete[] curr;
-					shoot();
 					break;
 				}
 				delete[] prev;
