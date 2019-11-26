@@ -87,13 +87,31 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 }
 
 void shoot() {
+	/*
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
 	for (int i = 0; i < 10; i++) {
 		Sleep(20);
 		mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
 	}
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
-	Sleep(1);
+	*/
+
+	INPUT _0_keyDown;
+	_0_keyDown.type = INPUT_KEYBOARD;
+	_0_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD0, MAPVK_VK_TO_VSC); // hardware scan code
+	_0_keyDown.ki.time = 0;
+	_0_keyDown.ki.wVk = VK_NUMPAD0; // virtual-key code
+	_0_keyDown.ki.dwExtraInfo = 0;
+	_0_keyDown.ki.dwFlags = 0; // 0 for key down
+	INPUT _0_keyUp = _0_keyDown;
+	_0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
+	
+	SendInput(1, &_0_keyDown, sizeof(INPUT));
+	for (int i = 0; i < 10; i++) {
+		Sleep(20);
+		mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
+	}
+	SendInput(1, &_0_keyUp, sizeof(INPUT));
 }
 
 void Aim() {
@@ -107,11 +125,13 @@ void Aim() {
 	RGBQUAD* curr;
 
 	while (true) {
-		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
+		// if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
+		if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) { // while lmb pressed
 			cout << "Engage motion trigger" << endl;
 			prev = scan(a, b);
 			curr = prev;
-			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
+			// while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
+			while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
 				if (compare(prev, curr)){
 					delete[] prev;
