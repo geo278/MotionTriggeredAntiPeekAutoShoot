@@ -59,7 +59,7 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
 
-		if (abs(currRed - prevRed) > 30 || abs(currGreen - prevGreen) > 30 || abs(currBlue - prevBlue) > 30) {
+		if (abs(currRed - prevRed) > 25 || abs(currGreen - prevGreen) > 25 || abs(currBlue - prevBlue) > 25) {
 			result = true;
 		}
 		/*
@@ -90,21 +90,22 @@ void Aim() {
 
 	while (true) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
+			cout << "Engage motion trigger" << endl;
 			prev = scan(a, b);
 			curr = prev;
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 				curr = scan(a, b);
 				if (compare(prev, curr)){
+					delete[] prev;
+					delete[] curr;
 					shoot();
 					break;
 				}
 				delete[] prev;
 				prev = curr;
 			}
-			delete[] prev;
-			delete[] curr;
+			cout << "Release motion trigger" << endl;
 		}
-
 		Sleep(1);
 	}
 }
