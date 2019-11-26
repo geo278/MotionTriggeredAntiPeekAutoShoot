@@ -45,17 +45,32 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
 	int tolerance = 15;
-	int x, y, index;
+	int x, y, index, j = 0;
 	// int tooBright = 230;
 
-	for (int i = 0; i < 2 * width; i++) {
+	for (int i = 0; i < (width * 2) + 8; i++) {
 		if (i < width) { // check first row
 			x = i;
 			y = 0;
-		}
-		else if (i >= width) { // check last row
+		} else if (i >= width && i < width * 2) { // check last row
 			x = i - width;
 			y = height - 1;
+		} else if (i >= width * 2) {
+			if (j < 4) {
+				x = 0;
+			} else {
+				x = width - 1;
+			}
+			if (j == 0 || j == 4) (
+				y = 1;
+			) else if (j == 1 || j == 5) {
+				y = 2;
+			} else if (j == 2 || j == 6) {
+				y = height - 3;
+			} else if (j == 3 || j == 7) {
+				y = height - 2;
+			}
+			j++;
 		}
 		index = y * width + x; // get 1d array index
 
@@ -68,6 +83,7 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 
 		if (abs(currRed - prevRed) > tolerance || abs(currGreen - prevGreen) > tolerance || abs(currBlue - prevBlue) > tolerance) {
 			result = true;
+			break;
 		}
 		/*
 		if (prevRed < tooBright && prevGreen < tooBright && prevBlue < tooBright &&
