@@ -51,7 +51,7 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
 	// int tooBright = 230;
-	int tolerance = 20;
+	int tolerance = 15;
 	int x, y, index;
 	double radius = 5, angle = 0;
 	for (int i = 0; i < 2 * width; i++) {
