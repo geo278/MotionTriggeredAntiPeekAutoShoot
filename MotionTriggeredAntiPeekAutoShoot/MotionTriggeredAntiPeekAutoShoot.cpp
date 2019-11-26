@@ -49,7 +49,26 @@ RGBQUAD* scan(POINT a, POINT b) {
 
 bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
+	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
+	// int tooBright = 230;
+	for (int i = 0; i < width * height; i++) {
+		prevRed = (int)prev[i].rgbRed;
+		prevGreen = (int)prev[i].rgbGreen;
+		prevBlue = (int)prev[i].rgbBlue;
+		currRed = (int)curr[i].rgbRed;
+		currGreen = (int)curr[i].rgbGreen;
+		currBlue = (int)curr[i].rgbBlue;
 
+		if (abs(currRed - prevRed) > 30 || abs(currGreen - prevGreen) > 30 || abs(currBlue - prevBlue) > 30) {
+			result = true;
+		}
+		/*
+		if (prevRed < tooBright && prevGreen < tooBright && prevBlue < tooBright &&
+			currRed > tooBright && currGreen > tooBright && currBlue > tooBright) {
+			result = false;
+		}
+		*/
+	}
 	return result;
 }
 
