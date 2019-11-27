@@ -48,6 +48,7 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 	int x, y, index, j = 0;
 	// int tooBright = 235;
 
+/*
 	for (int i = 0; i < (width * 2); i++) {
 		if (i < width) { // check first row
 			x = i;
@@ -56,25 +57,7 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 			x = i - width;
 			y = height - 1;
 		}
-		/*
-		else if (i >= width * 2) {
-			if (j < 4) {
-				x = 0;
-			} else {
-				x = width - 1;
-			}
-			if (j == 0 || j == 4) {
-				y = 1;
-			} else if (j == 1 || j == 5) {
-				y = 2;
-			} else if (j == 2 || j == 6) {
-				y = height - 3;
-			} else if (j == 3 || j == 7) {
-				y = height - 2;
-			}
-			j++;
-		}
-		*/
+
 		index = y * width + x; // get 1d array index
 
 		prevRed = (int)prev[index].rgbRed;
@@ -88,26 +71,37 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 			result = true;
 			break;
 		}
-		/*
-		if (prevRed < tooBright && prevGreen < tooBright && prevBlue < tooBright &&
-			currRed > tooBright && currGreen > tooBright && currBlue > tooBright) {
-			result = false;
-		}
-		*/
 	}
+*/
+	for (int i = 0; i < (width * height); i++) {
+		currRed = (int)curr[i].rgbRed;
+		currGreen = (int)curr[i].rgbGreen;
+		currBlue = (int)curr[i].rgbBlue;
+		for (int j = 0; j < (width * height); j++) {
+			prevRed = (int)prev[j].rgbRed;
+			prevGreen = (int)prev[j].rgbGreen;
+			prevBlue = (int)prev[j].rgbBlue;
+			if (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > tolerance) {
+				result = true;
+				break;
+			}
+		}
+	}
+
 	return result;
 }
 
 void shoot() {
-	/*
+	
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
+	mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0); // additional dampening for first shot recoil
 	for (int i = 0; i < 10; i++) {
 		Sleep(20);
 		mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
 	}
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
-	*/
-
+	
+	/*
 	INPUT _0_keyDown;
 	_0_keyDown.type = INPUT_KEYBOARD;
 	_0_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD0, MAPVK_VK_TO_VSC); // hardware scan code
@@ -126,6 +120,7 @@ void shoot() {
 		mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
 	}
 	SendInput(1, &_0_keyUp, sizeof(INPUT)); // end burst
+	*/
 }
 
 void main() {
@@ -139,8 +134,8 @@ void main() {
 	RGBQUAD* curr;
 
 	while (true) {
-		// if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
-		if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) { // while lmb pressed
+		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
+		// if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) { // while lmb pressed
 			cout << "Engage motion trigger" << endl;
 			prev = scan(a, b);
 			curr = prev;
