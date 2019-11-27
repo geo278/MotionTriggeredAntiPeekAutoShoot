@@ -56,16 +56,13 @@ bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 			x = i - width;
 			y = height - 1;
 		}
-
 		index = y * width + x; // get 1d array index
-
 		prevRed = (int)prev[index].rgbRed;
 		prevGreen = (int)prev[index].rgbGreen;
 		prevBlue = (int)prev[index].rgbBlue;
 		currRed = (int)curr[index].rgbRed;
 		currGreen = (int)curr[index].rgbGreen;
 		currBlue = (int)curr[index].rgbBlue;
-
 		if (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > tolerance) {
 			result = true;
 			break;
@@ -83,7 +80,7 @@ bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 			prevBlue = (int)prev[j].rgbBlue;
 			if (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < tolerance) {
 				break;
-			} else if (j == (width * height - 1) && abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > tolerance) {
+			} else if (j == (width * height - 1)) {
 				result = true;
 			}
 		}
