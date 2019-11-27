@@ -90,13 +90,9 @@ bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 }
 
 void shoot() {
-	
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
-	mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0); // additional dampening for first shot recoil
-	for (int i = 0; i < 10; i++) {
-		Sleep(20);
-		mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
-	}
+	Sleep(20);
+	mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0); // First shot recoil additional dampening
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
 	
 	/*
@@ -121,7 +117,19 @@ void shoot() {
 	*/
 }
 
+void passiveRecoilCompensation() {
+	while(1) {
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
+			Sleep(20);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
+		}
+		Sleep(1);
+	}
+}
+
 void main() {
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
+
 	POINT a, b;
 	a.x = screenWidth / 2 - width / 2;
 	a.y = screenHeight / 2 - height / 2;
@@ -132,13 +140,13 @@ void main() {
 	RGBQUAD* curr;
 
 	while (true) {
-		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
+		if (((GetKeyState(VK_CONTROL) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) { // while ctrl pressed
 		// if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) { // while lmb pressed
-			cout << "Engage motion trigger" << endl;
+			cout << "Activate motion trigger" << endl;
 			prev = scan(a, b);
 			curr = prev;
-			// while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
-			while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
+			while (((GetKeyState(VK_CONTROL) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
+			// while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
 				if (findDifference(prev, curr)){
 					shoot();
