@@ -9,7 +9,7 @@ using namespace std;
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
-int height = 8;
+int height = 6;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -41,12 +41,11 @@ RGBQUAD* scan(POINT a, POINT b) {
 	return pixels;
 }
 
-bool compare(RGBQUAD* prev, RGBQUAD* curr) {
+bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
 	int tolerance = 25;
-	int x, y, index, j = 0;
-	// int tooBright = 235;
+	int x, y, index;
 
 /*
 	for (int i = 0; i < (width * 2); i++) {
@@ -73,6 +72,7 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 		}
 	}
 */
+
 	for (int i = 0; i < (width * height); i++) {
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
@@ -81,13 +81,14 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 			prevRed = (int)prev[j].rgbRed;
 			prevGreen = (int)prev[j].rgbGreen;
 			prevBlue = (int)prev[j].rgbBlue;
-			if (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > tolerance) {
-				result = true;
+			if (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < tolerance) {
 				break;
+			} else if (j == (width * height - 1) && abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > tolerance) {
+				result = true;
 			}
 		}
+		if (result) { break; }
 	}
-
 	return result;
 }
 
@@ -142,7 +143,7 @@ void main() {
 			// while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 			while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
-				if (compare(prev, curr)){
+				if (findDifference(prev, curr)){
 					shoot();
 					delete[] prev;
 					delete[] curr;
