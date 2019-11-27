@@ -9,7 +9,7 @@ using namespace std;
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
-int height = 10;
+int height = 8;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -44,26 +44,28 @@ RGBQUAD* scan(POINT a, POINT b) {
 bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
-	int tolerance = 15;
+	int tolerance = 25;
 	int x, y, index, j = 0;
-	// int tooBright = 230;
+	// int tooBright = 235;
 
-	for (int i = 0; i < (width * 2) + 8; i++) {
+	for (int i = 0; i < (width * 2); i++) {
 		if (i < width) { // check first row
 			x = i;
 			y = 0;
 		} else if (i >= width && i < width * 2) { // check last row
 			x = i - width;
 			y = height - 1;
-		} else if (i >= width * 2) {
+		}
+		/*
+		else if (i >= width * 2) {
 			if (j < 4) {
 				x = 0;
 			} else {
 				x = width - 1;
 			}
-			if (j == 0 || j == 4) (
+			if (j == 0 || j == 4) {
 				y = 1;
-			) else if (j == 1 || j == 5) {
+			} else if (j == 1 || j == 5) {
 				y = 2;
 			} else if (j == 2 || j == 6) {
 				y = height - 3;
@@ -72,6 +74,7 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 			}
 			j++;
 		}
+		*/
 		index = y * width + x; // get 1d array index
 
 		prevRed = (int)prev[index].rgbRed;
@@ -81,7 +84,7 @@ bool compare(RGBQUAD* prev, RGBQUAD* curr) {
 		currGreen = (int)curr[index].rgbGreen;
 		currBlue = (int)curr[index].rgbBlue;
 
-		if (abs(currRed - prevRed) > tolerance || abs(currGreen - prevGreen) > tolerance || abs(currBlue - prevBlue) > tolerance) {
+		if (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > tolerance) {
 			result = true;
 			break;
 		}
