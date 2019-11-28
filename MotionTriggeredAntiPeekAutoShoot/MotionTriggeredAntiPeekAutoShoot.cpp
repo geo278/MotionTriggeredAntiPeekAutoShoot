@@ -92,9 +92,9 @@ bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 void shoot() {
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
 	Sleep(20);
-	mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0); // First shot recoil additional dampening
+	mouse_event(MOUSEEVENTF_MOVE, 0, 20, 0, 0); // First shot recoil additional dampening
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
-	
+
 	/*
 	INPUT _0_keyDown;
 	_0_keyDown.type = INPUT_KEYBOARD;
@@ -120,8 +120,18 @@ void shoot() {
 void passiveRecoilCompensation() {
 	while(1) {
 		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
+			Sleep(20)
+			mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
 			Sleep(20);
 			mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
+				mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
+			Sleep(20)
+			mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
+			Sleep(20);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
+				mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
+			Sleep(40);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 20, 0, 0);
 		}
 		Sleep(1);
 	}
