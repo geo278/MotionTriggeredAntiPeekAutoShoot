@@ -1,3 +1,2 @@
 ﻿  MotionTriggeredAntiPeekAutoShoot.cpp
-C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot.cpp(131,13): warning C4326: return type of 'main' should be 'int' instead of 'void'
   MotionTriggeredAntiPeekAutoShoot.vcxproj -> C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\Debug\MotionTriggeredAntiPeekAutoShoot.exe

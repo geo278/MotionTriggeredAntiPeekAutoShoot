@@ -9,7 +9,8 @@ using namespace std;
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
-int height = 6;
+int height = 10;
+bool enabled = true;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -44,8 +45,8 @@ RGBQUAD* scan(POINT a, POINT b) {
 bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
-	int tolerance = 25;
-	int x, y, index;
+	int tolerance = 30;
+	// int x, y, index;
 
 /*
 	for (int i = 0; i < (width * 2); i++) {
@@ -78,7 +79,8 @@ bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 			prevRed = (int)prev[j].rgbRed;
 			prevGreen = (int)prev[j].rgbGreen;
 			prevBlue = (int)prev[j].rgbBlue;
-			if (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < tolerance) {
+			if ((abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < tolerance) ) {
+				// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
 				break;
 			} else if (j == (width * height - 1)) {
 				result = true;
@@ -119,16 +121,27 @@ void shoot() {
 
 void passiveRecoilCompensation() {
 	while(1) {
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
-			Sleep(20)
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
+			Sleep(20);
 			mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
 		}
 		Sleep(1);
 	}
 }
+void toggleRecoilCompensation() {
+	while (1) {
+		if ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
+			enabled = !enabled;
+			while ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
+				Sleep(200);
+			}
+		}
+	}
+}
 
-void main() {
+int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) toggleRecoilCompensation, 0, 0, 0);
 
 	POINT a, b;
 	a.x = screenWidth / 2 - width / 2;
@@ -161,4 +174,5 @@ void main() {
 		}
 		Sleep(1);
 	}
+	return 0;
 }
