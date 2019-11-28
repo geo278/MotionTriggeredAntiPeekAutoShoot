@@ -13,7 +13,6 @@ int height = 10;
 bool recoilEnabled = true;
 int tolerance = 30;
 RGBQUAD* ignore;
-int ignoreSize = 1;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -45,7 +44,7 @@ RGBQUAD* scan(POINT a, POINT b) {
 	return pixels;
 }
 
-void updateIgnore(RGBQUAD* ignore, RGBQUAD* curr) {
+void updateIgnore(int& ignoreSize, RGBQUAD* ignore, RGBQUAD* curr) {
 	int ignoreRed, ignoreGreen, ignoreBlue, currRed, currGreen, currBlue;
 	for (int i = 0; i < (width * height); i++) {
 		currRed = (int)curr[i].rgbRed;
@@ -65,7 +64,7 @@ void updateIgnore(RGBQUAD* ignore, RGBQUAD* curr) {
 	}
 }
 
-bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
+bool findDifference(int& prevSize, RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
 	for (int i = 0; i < (width * height); i++) {
@@ -150,7 +149,7 @@ int main() {
 	// RGBQUAD* prev;
 	RGBQUAD* curr;
 	int preScanCount = 20;
-
+	int ignoreSize;
 	while (1) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
 		// if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) { // while lmb pressed
@@ -159,16 +158,17 @@ int main() {
 			//curr = prev;
 
 			ignore = new RGBQUAD[width * height * preScanCount];
+			ignoreSize = 1;
 			for (int i = 0; i < preScanCount; i++) {
 				curr = scan(a, b);
-				updateIgnore(ignore, curr);
+				updateIgnore(ignoreSize, ignore, curr);
 				Sleep(3);
 			}
 
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 			// while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
-				if (findDifference(ignore, curr)){
+				if (findDifference(ignoreSize, ignore, curr)){
 					shoot();
 					// delete[] prev;
 					delete[] curr;
@@ -179,7 +179,6 @@ int main() {
 				// prev = curr;
 			}
 			delete[] ignore;
-			ignoreSize = 1;
 			cout << "Release motion trigger" << endl;
 		}
 		Sleep(1);
