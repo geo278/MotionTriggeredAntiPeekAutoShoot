@@ -10,7 +10,11 @@ int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
 int height = 10;
-bool enabled = true;
+bool recoilEnabled = true;
+RGBQUAD* ignore;
+int ignoreSize = 1;
+int tolerance = 30;
+int preScanCount = 20;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -42,10 +46,29 @@ RGBQUAD* scan(POINT a, POINT b) {
 	return pixels;
 }
 
+void updateIgnore(RGBQUAD* ignore, RGBQUAD* curr) {
+	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
+	for (int i = 0; i < (width * height); i++) {
+		currRed = (int)curr[i].rgbRed;
+		currGreen = (int)curr[i].rgbGreen;
+		currBlue = (int)curr[i].rgbBlue;
+		for (int j = 0; j < (ignoreSize); j++) {
+			prevRed = (int)prev[j].rgbRed;
+			prevGreen = (int)prev[j].rgbGreen;
+			prevBlue = (int)prev[j].rgbBlue;
+			if ((abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < tolerance) ) {
+				break;
+			} else if (j == (ignoreSize - 1)) {
+				ignore[ignoreSize - 1] = curr[i];
+				ignoreSize++;
+			}
+		}
+	}
+}
+
 bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
-	int tolerance = 30;
 	// int x, y, index;
 
 /*
@@ -75,14 +98,14 @@ bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
-		for (int j = 0; j < (width * height); j++) {
+		for (int j = 0; j < (ignoreSize); j++) {
 			prevRed = (int)prev[j].rgbRed;
 			prevGreen = (int)prev[j].rgbGreen;
 			prevBlue = (int)prev[j].rgbBlue;
 			if ((abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < tolerance) ) {
 				// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
 				break;
-			} else if (j == (width * height - 1)) {
+			} else if (j == (ignoreSize - 1)) {
 				result = true;
 			}
 		}
@@ -121,17 +144,17 @@ void shoot() {
 
 void passiveRecoilCompensation() {
 	while(1) {
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && recoilEnabled) {
 			Sleep(20);
 			mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
 		}
 		Sleep(1);
 	}
 }
-void toggleRecoilCompensation() {
+void trackRecoilEnabled() {
 	while (1) {
 		if ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
-			enabled = !enabled;
+			recoilEnabled = !recoilEnabled;
 			while ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
 				Sleep(200);
 			}
@@ -141,7 +164,7 @@ void toggleRecoilCompensation() {
 
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
-	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) toggleRecoilCompensation, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackRecoilEnabled, 0, 0, 0);
 
 	POINT a, b;
 	a.x = screenWidth / 2 - width / 2;
@@ -149,27 +172,38 @@ int main() {
 	b.x = screenWidth / 2 + width / 2;
 	b.y = screenHeight / 2 + height / 2;
 
-	RGBQUAD* prev;
+	// RGBQUAD* prev;
 	RGBQUAD* curr;
 
-	while (true) {
+	while (1) {
 		if (((GetKeyState(VK_CONTROL) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) { // while ctrl pressed
 		// if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) { // while lmb pressed
 			cout << "Activate motion trigger" << endl;
-			prev = scan(a, b);
-			curr = prev;
+			//prev = scan(a, b);
+			//curr = prev;
+
+			ignore = new RGBQUAD[width * height * preScanCount];
+			for (int i = 0; i < preScanCount; i++) {
+				curr = scan(a, b);
+				updateIgnore(ignore, curr);
+				Sleep(3)
+			}
+
 			while (((GetKeyState(VK_CONTROL) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 			// while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
-				if (findDifference(prev, curr)){
+				if (findDifference(ignore, curr)){
 					shoot();
-					delete[] prev;
+					// delete[] prev;
 					delete[] curr;
 					break;
 				}
-				delete[] prev;
-				prev = curr;
+				// delete[] prev;
+				delete[] curr;
+				// prev = curr;
 			}
+			delete[] ignore;
+			ignoreSize = 1;
 			cout << "Release motion trigger" << endl;
 		}
 		Sleep(1);
