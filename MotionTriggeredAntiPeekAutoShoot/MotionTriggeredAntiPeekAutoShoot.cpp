@@ -11,10 +11,9 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
 int height = 10;
 bool recoilEnabled = true;
+int tolerance = 30;
 RGBQUAD* ignore;
 int ignoreSize = 1;
-int tolerance = 30;
-int preScanCount = 20;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -47,16 +46,16 @@ RGBQUAD* scan(POINT a, POINT b) {
 }
 
 void updateIgnore(RGBQUAD* ignore, RGBQUAD* curr) {
-	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
+	int ignoreRed, ignoreGreen, ignoreBlue, currRed, currGreen, currBlue;
 	for (int i = 0; i < (width * height); i++) {
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
 		for (int j = 0; j < (ignoreSize); j++) {
-			prevRed = (int)prev[j].rgbRed;
-			prevGreen = (int)prev[j].rgbGreen;
-			prevBlue = (int)prev[j].rgbBlue;
-			if ((abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < tolerance) ) {
+			ignoreRed = (int)ignore[j].rgbRed;
+			ignoreGreen = (int)ignore[j].rgbGreen;
+			ignoreBlue = (int)ignore[j].rgbBlue;
+			if ((abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue) < tolerance) ) {
 				break;
 			} else if (j == (ignoreSize - 1)) {
 				ignore[ignoreSize - 1] = curr[i];
@@ -69,31 +68,6 @@ void updateIgnore(RGBQUAD* ignore, RGBQUAD* curr) {
 bool findDifference(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
-	// int x, y, index;
-
-/*
-	for (int i = 0; i < (width * 2); i++) {
-		if (i < width) { // check first row
-			x = i;
-			y = 0;
-		} else if (i >= width && i < width * 2) { // check last row
-			x = i - width;
-			y = height - 1;
-		}
-		index = y * width + x; // get 1d array index
-		prevRed = (int)prev[index].rgbRed;
-		prevGreen = (int)prev[index].rgbGreen;
-		prevBlue = (int)prev[index].rgbBlue;
-		currRed = (int)curr[index].rgbRed;
-		currGreen = (int)curr[index].rgbGreen;
-		currBlue = (int)curr[index].rgbBlue;
-		if (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > tolerance) {
-			result = true;
-			break;
-		}
-	}
-*/
-
 	for (int i = 0; i < (width * height); i++) {
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
@@ -118,6 +92,7 @@ void shoot() {
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
 	Sleep(10);
 	mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0); // First shot recoil additional dampening
+	Sleep(90);
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
 
 	/*
@@ -174,9 +149,10 @@ int main() {
 
 	// RGBQUAD* prev;
 	RGBQUAD* curr;
+	int preScanCount = 20;
 
 	while (1) {
-		if (((GetKeyState(VK_CONTROL) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) { // while ctrl pressed
+		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
 		// if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) { // while lmb pressed
 			cout << "Activate motion trigger" << endl;
 			//prev = scan(a, b);
@@ -186,10 +162,10 @@ int main() {
 			for (int i = 0; i < preScanCount; i++) {
 				curr = scan(a, b);
 				updateIgnore(ignore, curr);
-				Sleep(3)
+				Sleep(3);
 			}
 
-			while (((GetKeyState(VK_CONTROL) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
+			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 			// while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
 				if (findDifference(ignore, curr)){
