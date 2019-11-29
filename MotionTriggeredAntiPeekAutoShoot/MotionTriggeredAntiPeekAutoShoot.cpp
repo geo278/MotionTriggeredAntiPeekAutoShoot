@@ -11,7 +11,7 @@ int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
 int height = 10;
-bool enabled = false;
+bool enabled = true;
 int tolerance = 30;
 
 RGBQUAD* scan(POINT a, POINT b) {
@@ -109,7 +109,7 @@ void passiveRecoilCompensation() {
 	while(1) {
 		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
 			Sleep(20);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
 		}
 		Sleep(1);
 	}
@@ -160,7 +160,7 @@ void trackEnabled() {
 
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
-	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	// CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT preScanTopLeft, preScanBottomRight;
@@ -184,24 +184,11 @@ int main() {
 			cout << "Activate motion trigger" << endl;
 
 			vector<RGBQUAD> ignore;
-			/*
-						RGBQUAD black;
-			black.rgbRed = 0;
-			black.rgbGreen = 0;
-			black.rgbBlue = 0;
-			RGBQUAD white;
-			white.rgbRed = 255;
-			white.rgbGreen = 255;
-			white.rgbBlue = 255;
-			ignore.push_back(black);
-			ignore.push_back(white);
-			*/
 
-			for (int i = 0; i < 200; i++) {
+			for (int i = 0; i < 100; i++) {
 				curr = scan(a, b);
 				updateIgnore(ignore, curr);
 				delete[] curr;
-				//Sleep(2);
 			}
 
 			int ignoreRed, ignoreGreen, ignoreBlue;
