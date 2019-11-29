@@ -1,1 +1,3 @@
-﻿  MotionTriggeredAntiPeekAutoShoot.vcxproj -> C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\Debug\MotionTriggeredAntiPeekAutoShoot.exe
+﻿  MotionTriggeredAntiPeekAutoShoot.cpp
+C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot.cpp(208,22): warning C4018: '<': signed/unsigned mismatch
+  MotionTriggeredAntiPeekAutoShoot.vcxproj -> C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\Debug\MotionTriggeredAntiPeekAutoShoot.exe

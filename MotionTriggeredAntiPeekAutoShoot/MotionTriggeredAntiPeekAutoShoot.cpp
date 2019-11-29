@@ -115,34 +115,34 @@ void passiveRecoilCompensation() {
 	}
 }
 void passiveLeaning() {
-	INPUT _VK_LEFT_keyDown;
-	_VK_LEFT_keyDown.type = INPUT_KEYBOARD;
-	_VK_LEFT_keyDown.ki.wScan = MapVirtualKey(VK_LEFT, MAPVK_VK_TO_VSC); // hardware scan code
-	_VK_LEFT_keyDown.ki.time = 0;
-	_VK_LEFT_keyDown.ki.wVk = VK_LEFT; // virtual-key code
-	_VK_LEFT_keyDown.ki.dwExtraInfo = 0;
-	_VK_LEFT_keyDown.ki.dwFlags = 0; // 0 for key down
-	INPUT _VK_LEFT_keyUp = _VK_LEFT_keyDown;
-	_VK_LEFT_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
-	INPUT _VK_RIGHT_keyDown = _VK_LEFT_keyDown;
-	_VK_RIGHT_keyDown.ki.wScan = MapVirtualKey(VK_RIGHT, MAPVK_VK_TO_VSC); // hardware scan code
-	_VK_RIGHT_keyDown.ki.wVk = VK_RIGHT; // virtual-key code
-	INPUT _VK_RIGHT_keyUp = _VK_RIGHT_keyDown;
-	_VK_RIGHT_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
+	INPUT _VK_NUMPAD1_keyDown;
+	_VK_NUMPAD1_keyDown.type = INPUT_KEYBOARD;
+	_VK_NUMPAD1_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD1, MAPVK_VK_TO_VSC); // hardware scan code
+	_VK_NUMPAD1_keyDown.ki.time = 0;
+	_VK_NUMPAD1_keyDown.ki.wVk = VK_NUMPAD1; // virtual-key code
+	_VK_NUMPAD1_keyDown.ki.dwExtraInfo = 0;
+	_VK_NUMPAD1_keyDown.ki.dwFlags = 0; // 0 for key down
+	INPUT _VK_NUMPAD1_keyUp = _VK_NUMPAD1_keyDown;
+	_VK_NUMPAD1_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
+	INPUT _VK_NUMPAD2_keyDown = _VK_NUMPAD1_keyDown;
+	_VK_NUMPAD2_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD2, MAPVK_VK_TO_VSC); // hardware scan code
+	_VK_NUMPAD2_keyDown.ki.wVk = VK_NUMPAD2; // virtual-key code
+	INPUT _VK_NUMPAD2_keyUp = _VK_NUMPAD2_keyDown;
+	_VK_NUMPAD2_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while(1) {
 		if (((GetKeyState(0x41) & 0x100) != 0) && enabled) { // A key cuases left lean
-			SendInput(1, &_VK_LEFT_keyDown, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			while (((GetKeyState(0x41) & 0x100) != 0) && enabled) {
 				Sleep(5);
 			}
-			SendInput(1, &_VK_LEFT_keyUp, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 		}
 		if (((GetKeyState(0x44) & 0x100) != 0) && enabled) { // D key cuases left lean
-			SendInput(1, &_VK_RIGHT_keyDown, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
 			while (((GetKeyState(0x44) & 0x100) != 0) && enabled) {
 				Sleep(5);
 			}
-			SendInput(1, &_VK_RIGHT_keyUp, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
 		}
 		Sleep(1);
 	}
