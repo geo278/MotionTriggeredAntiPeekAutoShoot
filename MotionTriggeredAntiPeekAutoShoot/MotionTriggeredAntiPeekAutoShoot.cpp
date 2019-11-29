@@ -3,6 +3,7 @@
 
 #include "iostream"
 #include "Windows.h"
+#include "vector" 
 
 using namespace std;
 
@@ -10,9 +11,8 @@ int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
 int height = 10;
-bool enabled = true;
+bool enabled = false;
 int tolerance = 30;
-RGBQUAD* ignore;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -44,42 +44,51 @@ RGBQUAD* scan(POINT a, POINT b) {
 	return pixels;
 }
 
-void updateIgnore(int& ignoreSize, RGBQUAD* ignore, RGBQUAD* curr) {
+void updateIgnore(vector<RGBQUAD>& ignore, RGBQUAD* curr) {
+	//int ignoreSizeInitial = ignoreSize;
 	int ignoreRed, ignoreGreen, ignoreBlue, currRed, currGreen, currBlue;
+	if (ignore.size() == 0) {
+		ignore.push_back(curr[0]);
+		//for (int i = 0; i < width * height; i++) {
+		//	ignore.push_back(curr[i]);
+		//}
+	}
 	for (int i = 0; i < (width * height); i++) {
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
-		for (int j = 0; j < (ignoreSize); j++) {
+		//cout << currRed << " " << currGreen << " " << currBlue << endl;
+		for (unsigned int j = 0; j < ignore.size(); j++) {
 			ignoreRed = (int)ignore[j].rgbRed;
 			ignoreGreen = (int)ignore[j].rgbGreen;
 			ignoreBlue = (int)ignore[j].rgbBlue;
-			if ((abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue) < tolerance) ) {
+			if ((abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue) < 5) ) {
 				break;
-			} else if (j == (ignoreSize - 1)) {
-				ignore[ignoreSize - 1] = curr[i];
-				ignoreSize++;
+			} else if (j == (ignore.size() - 1)) {
+				ignore.push_back(curr[i]);
+				// cout << ignore.size() << endl;
 			}
 		}
 	}
 }
 
-bool findDifference(int& prevSize, RGBQUAD* prev, RGBQUAD* curr) {
+bool findDifference(vector<RGBQUAD>& prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
 	for (int i = 0; i < (width * height); i++) {
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
-		for (int j = 0; j < (prevSize); j++) {
+		for (unsigned int j = 0; j < prev.size(); j++) {
 			prevRed = (int)prev[j].rgbRed;
 			prevGreen = (int)prev[j].rgbGreen;
 			prevBlue = (int)prev[j].rgbBlue;
-			if ((abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < tolerance) ) {
+			if ((abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < 30) ) {
 				// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
 				break;
-			} else if (j == (prevSize - 1)) {
+			} else if (j == (prev.size() - 1) && (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > tolerance)) {
 				result = true;
+				cout << currRed << " " << currGreen << " " << currBlue << "    " << j ;
 			}
 		}
 		if (result) { break; }
@@ -154,6 +163,11 @@ int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
+	POINT preScanTopLeft, preScanBottomRight;
+	preScanTopLeft.x = screenWidth / 2 - (width*10) / 2;
+	preScanTopLeft.y = screenHeight / 2 - (height*10) / 2;
+	preScanBottomRight.x = screenWidth / 2 + (width * 10) / 2;
+	preScanBottomRight.y = screenHeight / 2 + (height * 10) / 2;
 	POINT a, b;
 	a.x = screenWidth / 2 - width / 2;
 	a.y = screenHeight / 2 - height / 2;
@@ -163,38 +177,55 @@ int main() {
 	// RGBQUAD* prev;
 	RGBQUAD* curr;
 	int preScanCount = 20;
-	int ignoreSize;
+
 	while (1) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
 		// if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) { // while lmb pressed
 			cout << "Activate motion trigger" << endl;
-			//prev = scan(a, b);
-			//curr = prev;
 
-			ignore = new RGBQUAD[width * height * preScanCount];
-			ignoreSize = 1;
-			for (int i = 0; i < preScanCount; i++) {
+			vector<RGBQUAD> ignore;
+			/*
+						RGBQUAD black;
+			black.rgbRed = 0;
+			black.rgbGreen = 0;
+			black.rgbBlue = 0;
+			RGBQUAD white;
+			white.rgbRed = 255;
+			white.rgbGreen = 255;
+			white.rgbBlue = 255;
+			ignore.push_back(black);
+			ignore.push_back(white);
+			*/
+
+			for (int i = 0; i < 200; i++) {
 				curr = scan(a, b);
-				updateIgnore(ignoreSize, ignore, curr);
-				Sleep(3);
+				updateIgnore(ignore, curr);
+				delete[] curr;
+				//Sleep(2);
 			}
+
+			int ignoreRed, ignoreGreen, ignoreBlue;
+			for (int k = 0; k < ignore.size(); k++) {
+				ignoreRed = (int)ignore[k].rgbRed;
+				ignoreGreen = (int)ignore[k].rgbGreen;
+				ignoreBlue = (int)ignore[k].rgbBlue;
+			}
+			//cout << ignoreRed << " " << ignoreGreen << " " << ignoreBlue << endl;
+
 
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 			// while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
-				if (findDifference(ignoreSize, ignore, curr)){
+				if (findDifference(ignore, curr)) {
 					while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 						shoot();
 					}
-					// delete[] prev;
 					delete[] curr;
 					break;
 				}
-				// delete[] prev;
 				delete[] curr;
-				// prev = curr;
 			}
-			delete[] ignore;
+			ignore.clear();
 			cout << "Release motion trigger" << endl;
 		}
 		Sleep(1);
