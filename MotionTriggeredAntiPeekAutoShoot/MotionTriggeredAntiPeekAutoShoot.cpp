@@ -10,7 +10,7 @@ int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
 int height = 10;
-bool recoilEnabled = true;
+bool enabled = true;
 int tolerance = 30;
 RGBQUAD* ignore;
 
@@ -118,9 +118,41 @@ void shoot() {
 
 void passiveRecoilCompensation() {
 	while(1) {
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && recoilEnabled) {
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
 			Sleep(20);
 			mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
+		}
+		Sleep(1);
+	}
+}
+void passiveLeaning() {
+	INPUT _VK_LEFT_keyDown;
+	_VK_LEFT_keyDown.type = INPUT_KEYBOARD;
+	_VK_LEFT_keyDown.ki.wScan = MapVirtualKey(VK_LEFT, MAPVK_VK_TO_VSC); // hardware scan code
+	_VK_LEFT_keyDown.ki.time = 0;
+	_VK_LEFT_keyDown.ki.wVk = VK_LEFT; // virtual-key code
+	_VK_LEFT_keyDown.ki.dwExtraInfo = 0;
+	_VK_LEFT_keyDown.ki.dwFlags = 0; // 0 for key down
+	INPUT _VK_LEFT_keyUp = _VK_LEFT_keyDown;
+	_VK_LEFT_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
+	INPUT _VK_RIGHT_keyDown = _VK_LEFT_keyDown;
+	_VK_RIGHT_keyDown.ki.wScan = MapVirtualKey(VK_RIGHT, MAPVK_VK_TO_VSC); // hardware scan code
+	_VK_RIGHT_keyDown.ki.wVk = VK_RIGHT; // virtual-key code
+	INPUT _VK_RIGHT_keyUp = _VK_RIGHT_keyDown;
+	_VK_RIGHT_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
+	while(1) {
+		if (((GetKeyState(0x41) & 0x100) != 0) && enabled) { // A key cuases left lean
+			SendInput(1, &_VK_LEFT_keyDown, sizeof(INPUT));
+			while (((GetKeyState(0x41) & 0x100) != 0) && enabled) {
+				Sleep(5);
+			}
+			SendInput(1, &_VK_LEFT_keyUp, sizeof(INPUT));
+		if (((GetKeyState(0x44) & 0x100) != 0) && enabled) { // D key cuases left lean
+			SendInput(1, &_VK_RIGHT_keyDown, sizeof(INPUT));
+			while (((GetKeyState(0x44) & 0x100) != 0) && enabled) {
+				Sleep(5);
+			}
+			SendInput(1, &_VK_RIGHT_keyUp, sizeof(INPUT));
 		}
 		Sleep(1);
 	}
@@ -128,7 +160,7 @@ void passiveRecoilCompensation() {
 void trackRecoilEnabled() {
 	while (1) {
 		if ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
-			recoilEnabled = !recoilEnabled;
+			enabled = !enabled;
 			while ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
 				Sleep(200);
 			}
@@ -138,7 +170,8 @@ void trackRecoilEnabled() {
 
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
-	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackRecoilEnabled, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT a, b;
 	a.x = screenWidth / 2 - width / 2;
