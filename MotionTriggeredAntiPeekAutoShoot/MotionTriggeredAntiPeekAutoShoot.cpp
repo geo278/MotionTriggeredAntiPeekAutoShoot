@@ -71,14 +71,14 @@ bool findDifference(int& prevSize, RGBQUAD* prev, RGBQUAD* curr) {
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
-		for (int j = 0; j < (ignoreSize); j++) {
+		for (int j = 0; j < (prevSize); j++) {
 			prevRed = (int)prev[j].rgbRed;
 			prevGreen = (int)prev[j].rgbGreen;
 			prevBlue = (int)prev[j].rgbBlue;
 			if ((abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < tolerance) ) {
 				// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
 				break;
-			} else if (j == (ignoreSize - 1)) {
+			} else if (j == (prevSize - 1)) {
 				result = true;
 			}
 		}
@@ -127,6 +127,7 @@ void passiveLeaning() {
 				Sleep(5);
 			}
 			SendInput(1, &_VK_LEFT_keyUp, sizeof(INPUT));
+		}
 		if (((GetKeyState(0x44) & 0x100) != 0) && enabled) { // D key cuases left lean
 			SendInput(1, &_VK_RIGHT_keyDown, sizeof(INPUT));
 			while (((GetKeyState(0x44) & 0x100) != 0) && enabled) {
@@ -137,7 +138,7 @@ void passiveLeaning() {
 		Sleep(1);
 	}
 }
-void trackRecoilEnabled() {
+void trackEnabled() {
 	while (1) {
 		if ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
 			enabled = !enabled;
