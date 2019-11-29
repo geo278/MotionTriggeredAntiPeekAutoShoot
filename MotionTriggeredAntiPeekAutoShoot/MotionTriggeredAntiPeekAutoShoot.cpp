@@ -45,19 +45,14 @@ RGBQUAD* scan(POINT a, POINT b) {
 }
 
 void updateIgnore(vector<RGBQUAD>& ignore, RGBQUAD* curr) {
-	//int ignoreSizeInitial = ignoreSize;
 	int ignoreRed, ignoreGreen, ignoreBlue, currRed, currGreen, currBlue;
 	if (ignore.size() == 0) {
 		ignore.push_back(curr[0]);
-		//for (int i = 0; i < width * height; i++) {
-		//	ignore.push_back(curr[i]);
-		//}
 	}
 	for (int i = 0; i < (width * height); i++) {
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
-		//cout << currRed << " " << currGreen << " " << currBlue << endl;
 		for (unsigned int j = 0; j < ignore.size(); j++) {
 			ignoreRed = (int)ignore[j].rgbRed;
 			ignoreGreen = (int)ignore[j].rgbGreen;
@@ -66,7 +61,6 @@ void updateIgnore(vector<RGBQUAD>& ignore, RGBQUAD* curr) {
 				break;
 			} else if (j == (ignore.size() - 1)) {
 				ignore.push_back(curr[i]);
-				// cout << ignore.size() << endl;
 			}
 		}
 	}
@@ -190,7 +184,6 @@ int main() {
 	b.x = screenWidth / 2 + width / 2;
 	b.y = screenHeight / 2 + height / 2;
 
-	// RGBQUAD* prev;
 	RGBQUAD* curr;
 	int preScanCount = 20;
 
