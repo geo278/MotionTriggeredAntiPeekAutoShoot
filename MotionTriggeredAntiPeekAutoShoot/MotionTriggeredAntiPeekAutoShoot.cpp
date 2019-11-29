@@ -93,27 +93,7 @@ void shoot() {
 	mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0); // First shot recoil additional dampening
 	Sleep(90);
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
-
-	/*
-	INPUT _0_keyDown;
-	_0_keyDown.type = INPUT_KEYBOARD;
-	_0_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD0, MAPVK_VK_TO_VSC); // hardware scan code
-	_0_keyDown.ki.time = 0;
-	_0_keyDown.ki.wVk = VK_NUMPAD0; // virtual-key code
-	_0_keyDown.ki.dwExtraInfo = 0;
-	_0_keyDown.ki.dwFlags = 0; // 0 for key down
-	INPUT _0_keyUp = _0_keyDown;
-	_0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
-	
-	SendInput(1, &_0_keyDown, sizeof(INPUT)); // begin burst
-	Sleep(10); // delay to prevent displacement of first shot
-	mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0); // additional dampening for first shot recoil
-	for (int i = 0; i < 9; i++) { // recoil compensation
-		Sleep(20);
-		mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
-	}
-	SendInput(1, &_0_keyUp, sizeof(INPUT)); // end burst
-	*/
+	Sleep(10);
 }
 
 void passiveRecoilCompensation() {
@@ -202,7 +182,9 @@ int main() {
 			// while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
 				if (findDifference(ignoreSize, ignore, curr)){
-					shoot();
+					while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
+						shoot();
+					}
 					// delete[] prev;
 					delete[] curr;
 					break;
