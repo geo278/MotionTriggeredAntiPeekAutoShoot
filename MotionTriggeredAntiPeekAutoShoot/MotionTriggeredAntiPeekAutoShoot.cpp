@@ -12,7 +12,7 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
 int height = 10;
 bool enabled = true;
-int tolerance = 30;
+bool preScanComplete = false;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -62,13 +62,34 @@ void updateIgnore(vector<RGBQUAD>& ignore, RGBQUAD* curr) {
 			ignoreRed = (int)ignore[j].rgbRed;
 			ignoreGreen = (int)ignore[j].rgbGreen;
 			ignoreBlue = (int)ignore[j].rgbBlue;
-			if ((abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue) < 5) ) {
+			if ((abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue) < 3) ) {
 				break;
 			} else if (j == (ignore.size() - 1)) {
 				ignore.push_back(curr[i]);
 				// cout << ignore.size() << endl;
 			}
 		}
+	}
+}
+void scanCoverageRoutine() {
+	int i = 0;
+	int k = 1;
+	while (!preScanComplete) {
+		if (i%2 = 0) {
+			k = 1;
+		} else {
+			k = -1;
+		}
+		mouse_event(MOUSEEVENTF_MOVE, k * i, 0, 0, 0);
+		Sleep(4);
+		mouse_event(MOUSEEVENTF_MOVE, 0, k * i, 0, 0);
+		Sleep(4);
+		i++;
+	}
+	if (k < 0) { // reset position
+		mouse_event(MOUSEEVENTF_MOVE, k * (i / 2 + 1), k * (i / 2 + 1), 0, 0);
+	} else {
+		mouse_event(MOUSEEVENTF_MOVE, k * (i / 2 ), k * (i / 2), 0, 0);
 	}
 }
 
@@ -163,11 +184,6 @@ int main() {
 	// CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
-	POINT preScanTopLeft, preScanBottomRight;
-	preScanTopLeft.x = screenWidth / 2 - (width*10) / 2;
-	preScanTopLeft.y = screenHeight / 2 - (height*10) / 2;
-	preScanBottomRight.x = screenWidth / 2 + (width * 10) / 2;
-	preScanBottomRight.y = screenHeight / 2 + (height * 10) / 2;
 	POINT a, b;
 	a.x = screenWidth / 2 - width / 2;
 	a.y = screenHeight / 2 - height / 2;
@@ -184,13 +200,15 @@ int main() {
 			cout << "Activate motion trigger" << endl;
 
 			vector<RGBQUAD> ignore;
-
+			preScanComplete = false;
+			CreateThread(0, 0, (LPTHREAD_START_ROUTINE) scanCoverageRoutine, 0, 0, 0);
 			for (int i = 0; i < 100; i++) {
 				curr = scan(a, b);
 				updateIgnore(ignore, curr);
 				delete[] curr;
 			}
-
+			preScanComplete = true;
+			/*
 			int ignoreRed, ignoreGreen, ignoreBlue;
 			for (int k = 0; k < ignore.size(); k++) {
 				ignoreRed = (int)ignore[k].rgbRed;
@@ -198,7 +216,7 @@ int main() {
 				ignoreBlue = (int)ignore[k].rgbBlue;
 			}
 			//cout << ignoreRed << " " << ignoreGreen << " " << ignoreBlue << endl;
-
+			*/
 
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 			// while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
