@@ -175,7 +175,7 @@ void trackEnabled() {
 
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
-	// CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT a, b;
@@ -199,6 +199,7 @@ int main() {
 				curr = scan(a, b);
 				updateIgnore(ignore, curr);
 				delete[] curr;
+				Sleep(0);
 			}
 			preScanComplete = true;
 			/*
