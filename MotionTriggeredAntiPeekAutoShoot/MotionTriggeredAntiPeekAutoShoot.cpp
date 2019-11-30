@@ -69,7 +69,7 @@ void scanCoverageRoutine() {
 	int i = 0;
 	int k = 1;
 	while (!preScanComplete) {
-		if (i%2 = 0) {
+		if (i%2 == 0) {
 			k = 1;
 		} else {
 			k = -1;
@@ -81,9 +81,9 @@ void scanCoverageRoutine() {
 		i++;
 	}
 	if (k < 0) { // reset position
-		mouse_event(MOUSEEVENTF_MOVE, k * (i / 2 + 1), k * (i / 2 + 1), 0, 0);
+		mouse_event(MOUSEEVENTF_MOVE, -k * (i / 2 + 1), -k * (i / 2 + 1), 0, 0);
 	} else {
-		mouse_event(MOUSEEVENTF_MOVE, k * (i / 2 ), k * (i / 2), 0, 0);
+		mouse_event(MOUSEEVENTF_MOVE, -k * (i / 2 ), -k * (i / 2), 0, 0);
 	}
 }
 
@@ -101,7 +101,7 @@ bool findDifference(vector<RGBQUAD>& prev, RGBQUAD* curr) {
 			if ((abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < 30) ) {
 				// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
 				break;
-			} else if (j == (prev.size() - 1) && (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > tolerance)) {
+			} else if (j == (prev.size() - 1) && (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > 30)) {
 				result = true;
 				cout << currRed << " " << currGreen << " " << currBlue << "    " << j ;
 			}
@@ -193,11 +193,13 @@ int main() {
 			cout << "Activate motion trigger" << endl;
 
 			vector<RGBQUAD> ignore;
-			preScanComplete = false;
-			CreateThread(0, 0, (LPTHREAD_START_ROUTINE) scanCoverageRoutine, 0, 0, 0);
-			for (int i = 0; i < 100; i++) {
+			for (int i = 0; i < 60; i++) {
 				curr = scan(a, b);
 				updateIgnore(ignore, curr);
+				if (i == 0) {
+					preScanComplete = false;
+					CreateThread(0, 0, (LPTHREAD_START_ROUTINE)scanCoverageRoutine, 0, 0, 0);
+				}
 				delete[] curr;
 				Sleep(0);
 			}
