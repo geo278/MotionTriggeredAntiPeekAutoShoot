@@ -88,6 +88,7 @@ void scanCoverageRoutine() {
 }
 
 bool findDifference(vector<RGBQUAD>& prev, RGBQUAD* curr) {
+	int diffCount = 0;
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
 	for (int i = 0; i < (width * height); i++) {
@@ -102,8 +103,13 @@ bool findDifference(vector<RGBQUAD>& prev, RGBQUAD* curr) {
 				// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
 				break;
 			} else if (j == (prev.size() - 1) && (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > 30)) {
-				result = true;
-				cout << currRed << " " << currGreen << " " << currBlue << "    " << j ;
+				if (diffCount < 2) {
+					diffCount++;
+				} else {
+					result = true;
+					cout << currRed << " " << currGreen << " " << currBlue << "    " << j;
+				}
+
 			}
 		}
 		if (result) { break; }
