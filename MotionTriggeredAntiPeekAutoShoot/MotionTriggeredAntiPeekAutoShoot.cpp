@@ -103,7 +103,7 @@ bool findDifference(vector<RGBQUAD>& prev, RGBQUAD* curr) {
 				// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
 				break;
 			} else if (j == (prev.size() - 1) && (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > 30)) {
-				if (diffCount < 2) {
+				if (diffCount < 1) {
 					diffCount++;
 				} else {
 					result = true;
@@ -128,7 +128,6 @@ void shoot() {
 
 void passiveRecoilCompensation() { //
 	int burstCounter = 0;
-	int calFactor = 2;
 	INPUT _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyDown.type = INPUT_KEYBOARD;
 	_VK_NUMPAD0_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD0, MAPVK_VK_TO_VSC); // hardware scan code
@@ -139,24 +138,40 @@ void passiveRecoilCompensation() { //
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while(1) {
-		if (burstCounter == 4) {
-			Sleep(400);
+		/*
+				if (burstCounter == 4) {
+			Sleep(900);
+			burstCounter = 0;
+		}
+		else if (burstCounter > 0) {
+			Sleep(100);
 			burstCounter = 0;
 		}
 		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && burstCounter < 4) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
 			Sleep(10);
-			mouse_event(MOUSEEVENTF_MOVE, 3, 52 * calFactor, 0, 0);
+			mouse_event(MOUSEEVENTF_MOVE, 3, 89, 0, 0);
 			Sleep(48);
-			mouse_event(MOUSEEVENTF_MOVE, 4, 35 * calFactor, 0, 0);
+			mouse_event(MOUSEEVENTF_MOVE, 4, 60, 0, 0);0
 			Sleep(48);
-			mouse_event(MOUSEEVENTF_MOVE, 4, 35 * calFactor, 0, 0);
-			Sleep(48);
-			mouse_event(MOUSEEVENTF_MOVE, 4, 35 * calFactor, 0, 0);
+			mouse_event(MOUSEEVENTF_MOVE, 4, 60, 0, 0);
+			Sleep(48);0
+			mouse_event(MOUSEEVENTF_MOVE, 4, 60, 0, 0);
 			Sleep(28);
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 			Sleep(10);
 			burstCounter++;
+		}
+		*/
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
+			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			Sleep(10);
+			for (int i = 0; i < 5; i++) {
+				mouse_event(MOUSEEVENTF_MOVE, 1, 9, 0, 0);
+				Sleep(18);
+			}
+			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			Sleep(10);
 		}
 		Sleep(1);
 	}
@@ -196,12 +211,14 @@ void passiveLeaning() {
 }
 void trackEnabled() {
 	while (1) {
-		if ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
-			enabled = !enabled;
-			while ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
-				Sleep(200);
-			}
+		if (!enabled) {
+			enabled = true;
 		}
+		while ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
+			enabled = false;
+			Sleep(200);
+		}
+		Sleep(100);
 	}
 }
 
