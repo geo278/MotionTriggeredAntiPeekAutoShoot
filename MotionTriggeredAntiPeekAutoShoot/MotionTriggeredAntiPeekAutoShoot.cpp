@@ -126,11 +126,37 @@ void shoot() {
 	Sleep(10);
 }
 
-void passiveRecoilCompensation() {
+void passiveRecoilCompensation() { //
+	int burstCounter = 0;
+	int calFactor = 2;
+	INPUT _VK_NUMPAD0_keyDown;
+	_VK_NUMPAD0_keyDown.type = INPUT_KEYBOARD;
+	_VK_NUMPAD0_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD0, MAPVK_VK_TO_VSC); // hardware scan code
+	_VK_NUMPAD0_keyDown.ki.time = 0;
+	_VK_NUMPAD0_keyDown.ki.wVk = VK_NUMPAD0; // virtual-key code
+	_VK_NUMPAD0_keyDown.ki.dwExtraInfo = 0;
+	_VK_NUMPAD0_keyDown.ki.dwFlags = 0; // 0 for key down
+	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
+	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while(1) {
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
-			Sleep(20);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
+		if (burstCounter == 4) {
+			Sleep(400);
+			burstCounter = 0;
+		}
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && burstCounter < 4) {
+			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			Sleep(10);
+			mouse_event(MOUSEEVENTF_MOVE, 3, 52 * calFactor, 0, 0);
+			Sleep(48);
+			mouse_event(MOUSEEVENTF_MOVE, 4, 35 * calFactor, 0, 0);
+			Sleep(48);
+			mouse_event(MOUSEEVENTF_MOVE, 4, 35 * calFactor, 0, 0);
+			Sleep(48);
+			mouse_event(MOUSEEVENTF_MOVE, 4, 35 * calFactor, 0, 0);
+			Sleep(28);
+			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			Sleep(10);
+			burstCounter++;
 		}
 		Sleep(1);
 	}
@@ -181,7 +207,7 @@ void trackEnabled() {
 
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
-	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT a, b;
@@ -199,7 +225,7 @@ int main() {
 			cout << "Activate motion trigger" << endl;
 
 			vector<RGBQUAD> ignore;
-			for (int i = 0; i < 60; i++) {
+			for (int i = 0; i < 40; i++) {
 				curr = scan(a, b);
 				updateIgnore(ignore, curr);
 				if (i == 0) {
