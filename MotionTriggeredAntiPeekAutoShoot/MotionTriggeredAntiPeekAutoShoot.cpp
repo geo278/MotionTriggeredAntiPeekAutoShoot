@@ -120,14 +120,14 @@ bool findDifference(vector<RGBQUAD>& prev, RGBQUAD* curr) {
 void shoot() {
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
 	Sleep(10);
-	mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0); // First shot recoil additional dampening
+	//mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0); // First shot recoil additional dampening
 	Sleep(90);
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
 	Sleep(10);
 }
 
 void passiveRecoilCompensation() { //
-	int burstCounter = 0;
+	double calFactor = 0.8;
 	INPUT _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyDown.type = INPUT_KEYBOARD;
 	_VK_NUMPAD0_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD0, MAPVK_VK_TO_VSC); // hardware scan code
@@ -138,41 +138,34 @@ void passiveRecoilCompensation() { //
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while(1) {
-		/*
-				if (burstCounter == 4) {
-			Sleep(900);
-			burstCounter = 0;
-		}
-		else if (burstCounter > 0) {
-			Sleep(100);
-			burstCounter = 0;
-		}
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && burstCounter < 4) {
-			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+
+		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
+			//SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			//Sleep(10);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 7, 0, 0);
 			Sleep(10);
-			mouse_event(MOUSEEVENTF_MOVE, 3, 89, 0, 0);
-			Sleep(48);
-			mouse_event(MOUSEEVENTF_MOVE, 4, 60, 0, 0);0
-			Sleep(48);
-			mouse_event(MOUSEEVENTF_MOVE, 4, 60, 0, 0);
-			Sleep(48);0
-			mouse_event(MOUSEEVENTF_MOVE, 4, 60, 0, 0);
-			Sleep(28);
-			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(10);
-			burstCounter++;
+			//SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			//Sleep(10);
 		}
-		*/
+/*
+		if ((GetKeyState(VK_OEM_MINUS) & 0x100) != 0) {
+			if (calFactor == 0.8) {
+				calFactor = 2;
+			} else {
+				calFactor = 0.8;
+			}
+			cout << "calFactor: " << calFactor << endl;
+			Sleep(150);
+		}
 		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			Sleep(10);
-			for (int i = 0; i < 5; i++) {
-				mouse_event(MOUSEEVENTF_MOVE, 1, 9, 0, 0);
-				Sleep(18);
-			}
+			Sleep(6);
+			mouse_event(MOUSEEVENTF_MOVE, 0, (int)16 * calFactor, 0, 0);
+			Sleep(6);
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(10);
+			Sleep(6);
 		}
+	*/	
 		Sleep(1);
 	}
 }
@@ -224,7 +217,7 @@ void trackEnabled() {
 
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
-	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	// CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT a, b;
