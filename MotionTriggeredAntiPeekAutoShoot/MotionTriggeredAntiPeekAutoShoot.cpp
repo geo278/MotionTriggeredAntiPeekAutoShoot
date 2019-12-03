@@ -44,7 +44,8 @@ RGBQUAD* scan(POINT a, POINT b) {
 	return pixels;
 }
 
-void updateIgnore(vector<RGBQUAD>& ignore, RGBQUAD* curr) {
+bool findDifference(vector<RGBQUAD>& ignore, RGBQUAD* curr, bool updateIgnore = false) {
+	bool result = false;
 	int ignoreRed, ignoreGreen, ignoreBlue, currRed, currGreen, currBlue;
 	if (ignore.size() == 0) {
 		ignore.push_back(curr[0]);
@@ -57,13 +58,34 @@ void updateIgnore(vector<RGBQUAD>& ignore, RGBQUAD* curr) {
 			ignoreRed = (int)ignore[j].rgbRed;
 			ignoreGreen = (int)ignore[j].rgbGreen;
 			ignoreBlue = (int)ignore[j].rgbBlue;
-			if ((abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue) < 3) ) {
+			int absDifference = abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue);
+
+
+			if ((absDifference < 3 && updateIgnore) ) { // prescan includes all, after scans include only >3 and < 30
 				break;
-			} else if (j == (ignore.size() - 1)) {
+			} else if (j == (ignore.size() - 1  && updateIgnore)) {
 				ignore.push_back(curr[i]);
 			}
+
+
+
+			if (updateIgnore == false) {
+				if ((absDifference < 30) ) {
+					// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
+					break;
+				} else if (j == (ignore.size() - 1) && (absDifference > 30)) {
+					//if (diffCount < 1) {
+					//	diffCount++;
+					//} else {
+					result = true;
+					//cout << currRed << " " << currGreen << " " << currBlue << "    " << j;
+					//}
+				}
+			}
 		}
+		if (result && !updateIgnore) { break; }
 	}
+	return result;
 }
 void scanCoverageRoutine() {
 	int i = 0;
@@ -85,39 +107,6 @@ void scanCoverageRoutine() {
 	} else {
 		mouse_event(MOUSEEVENTF_MOVE, -k * (i / 2 ), -k * (i / 2), 0, 0);
 	}
-}
-
-bool findDifference(vector<RGBQUAD>& prev, RGBQUAD* curr) {
-	// int diffCount = 0;
-	bool result = false;
-	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue;
-	for (int i = 0; i < (width * height); i++) {
-		currRed = (int)curr[i].rgbRed;
-		currGreen = (int)curr[i].rgbGreen;
-		currBlue = (int)curr[i].rgbBlue;
-
-		for (unsigned int j = 0; j < prev.size(); j++) {
-		// for (int j = (height / 2 - 5) * width + (width / 2 - 1); j < (height / 2 - 5) * width + (width / 2 - 1) + 2; j++) {
-			// index = y * width + x; // get 1d array index
-			prevRed = (int)prev[j].rgbRed;
-			prevGreen = (int)prev[j].rgbGreen;
-			prevBlue = (int)prev[j].rgbBlue;
-			if ((abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) < 30) ) {
-				// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
-				break;
-			} else if (j == (prev.size() - 1) && (abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue) > 30)) {
-				//if (diffCount < 1) {
-				//	diffCount++;
-				//} else {
-					result = true;
-					cout << currRed << " " << currGreen << " " << currBlue << "    " << j;
-				//}
-
-			}
-		}
-		if (result) { break; }
-	}
-	return result;
 }
 
 void shoot() {
@@ -238,7 +227,7 @@ int main() {
 			vector<RGBQUAD> ignore;
 			for (int i = 0; i < 40; i++) {
 				curr = scan(a, b);
-				updateIgnore(ignore, curr);
+				findDifference(ignore, curr, true);
 				if (i == 0) {
 					preScanComplete = false;
 					CreateThread(0, 0, (LPTHREAD_START_ROUTINE)scanCoverageRoutine, 0, 0, 0);
