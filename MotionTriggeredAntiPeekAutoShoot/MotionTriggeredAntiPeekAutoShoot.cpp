@@ -12,7 +12,6 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
 int height = 10;
 bool enabled = true;
-bool preScanComplete = false;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -59,9 +58,8 @@ bool findDifference(vector<RGBQUAD>& ignore, RGBQUAD* curr, bool updateIgnore = 
 			ignoreGreen = (int)ignore[j].rgbGreen;
 			ignoreBlue = (int)ignore[j].rgbBlue;
 			int absDifference = abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue);
-
 			if (updateIgnore) {
-				if (absDifference <= 6) { // prescan includes all, after scans include only >3 and < 30
+				if (absDifference <= 6) {
 					break;
 				} else if (j == (ignore.size() - 1)) {
 					ignore.push_back(curr[i]);
@@ -197,9 +195,10 @@ void trackEnabled() {
 	while (1) {
 		while ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
 			enabled = false;
-			Sleep(200);
+			Sleep(2000);
+			enabled = true;
+			Sleep(2);
 		}
-		enabled = true;
 		Sleep(2);
 	}
 }
@@ -217,14 +216,14 @@ int main() {
 
 	RGBQUAD* curr;
 	int preScanCount = 20;
+	bool preScanComplete = false;
 
 	while (1) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
-		// if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) { // while lmb pressed
 			cout << "Activate motion trigger" << endl;
 
 			vector<RGBQUAD> ignore;
-			for (int i = 0; i < 40; i++) {
+			for (int i = 0; i < 30; i++) {
 				curr = scan(a, b);
 				findDifference(ignore, curr, true);
 				if (i == 0) {
@@ -237,7 +236,6 @@ int main() {
 			preScanComplete = true;
 
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
-			// while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
 				curr = scan(a, b);
 				if (findDifference(ignore, curr)) {
 					while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
