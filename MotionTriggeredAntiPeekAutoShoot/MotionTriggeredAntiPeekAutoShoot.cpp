@@ -60,18 +60,17 @@ bool findDifference(vector<RGBQUAD>& ignore, RGBQUAD* curr, bool updateIgnore = 
 			ignoreBlue = (int)ignore[j].rgbBlue;
 			int absDifference = abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue);
 
-
-			if ((absDifference < 3 && updateIgnore) ) { // prescan includes all, after scans include only >3 and < 30
-				break;
-			} else if (j == (ignore.size() - 1  && updateIgnore)) {
-				ignore.push_back(curr[i]);
-			}
-
-
-
-			if (updateIgnore == false) {
-				if ((absDifference < 30) ) {
-					// && (abs(currRed - prevRed) < tolerance/3 && abs(currGreen - prevGreen) < tolerance/3 && abs(currBlue - prevBlue) < tolerance/3)
+			if (updateIgnore) {
+				if (absDifference <= 6) { // prescan includes all, after scans include only >3 and < 30
+					break;
+				} else if (j == (ignore.size() - 1)) {
+					ignore.push_back(curr[i]);
+				}
+			} else {
+				if (absDiffernce <= 6) {
+					break;
+				} else if (absDifference <= 30) {
+					ignore.push_back(curr[i]);
 					break;
 				} else if (j == (ignore.size() - 1) && (absDifference > 30)) {
 					//if (diffCount < 1) {
