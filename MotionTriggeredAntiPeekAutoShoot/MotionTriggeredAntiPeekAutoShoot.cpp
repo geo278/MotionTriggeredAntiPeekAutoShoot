@@ -249,15 +249,6 @@ int main() {
 				Sleep(0);
 			}
 			preScanComplete = true;
-			/*
-			int ignoreRed, ignoreGreen, ignoreBlue;
-			for (int k = 0; k < ignore.size(); k++) {
-				ignoreRed = (int)ignore[k].rgbRed;
-				ignoreGreen = (int)ignore[k].rgbGreen;
-				ignoreBlue = (int)ignore[k].rgbBlue;
-			}
-			//cout << ignoreRed << " " << ignoreGreen << " " << ignoreBlue << endl;
-			*/
 
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 			// while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_CAPITAL) & 0x100) == 0)) {
