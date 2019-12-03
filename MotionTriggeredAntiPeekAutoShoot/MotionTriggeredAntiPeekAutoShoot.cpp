@@ -96,8 +96,8 @@ bool findDifference(vector<RGBQUAD>& prev, RGBQUAD* curr) {
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
 
-		// for (unsigned int j = 0; j < prev.size(); j++) {
-		for (unsigned int j = (height / 2 - 5) * width + (width / 2 - 1); j < (height / 2 - 5) * width + (width / 2 - 1) + 2; j++) {
+		for (unsigned int j = 0; j < prev.size(); j++) {
+		// for (int j = (height / 2 - 5) * width + (width / 2 - 1); j < (height / 2 - 5) * width + (width / 2 - 1) + 2; j++) {
 			// index = y * width + x; // get 1d array index
 			prevRed = (int)prev[j].rgbRed;
 			prevGreen = (int)prev[j].rgbGreen;
@@ -142,13 +142,13 @@ void passiveRecoilCompensation() { //
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while(1) {
 		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
-			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			for (int i = 0; i < 20; i++) {
-				Sleep(10);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 7, 0, 0);
-			}
-			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(11);
+			//SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			//for (int i = 0; i < 20; i++) {
+				Sleep(12);
+				mouse_event(MOUSEEVENTF_MOVE, -1, 7, 0, 0);
+			//}
+			//SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			//Sleep(11);
 		}
 /*
 		if ((GetKeyState(VK_OEM_MINUS) & 0x100) != 0) {
@@ -207,14 +207,12 @@ void passiveLeaning() {
 }
 void trackEnabled() {
 	while (1) {
-		if (!enabled) {
-			enabled = true;
-		}
 		while ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
 			enabled = false;
 			Sleep(200);
 		}
-		Sleep(100);
+		enabled = true;
+		Sleep(2);
 	}
 }
 
