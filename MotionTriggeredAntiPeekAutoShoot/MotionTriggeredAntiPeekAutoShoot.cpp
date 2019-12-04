@@ -12,6 +12,7 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 10;
 int height = 10;
 bool enabled = true;
+bool preScanComplete = false;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -65,7 +66,7 @@ bool findDifference(vector<RGBQUAD>& ignore, RGBQUAD* curr, bool updateIgnore = 
 					ignore.push_back(curr[i]);
 				}
 			} else {
-				if (absDiffernce <= 6) {
+				if (absDifference <= 6) {
 					break;
 				} else if (absDifference <= 30) {
 					ignore.push_back(curr[i]);
@@ -128,15 +129,31 @@ void passiveRecoilCompensation() { //
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while(1) {
 		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
-			//SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			//for (int i = 0; i < 20; i++) {
-				Sleep(12);
-				mouse_event(MOUSEEVENTF_MOVE, -1, 7, 0, 0);
-			//}
-			//SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			//Sleep(11);
+			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+
+			Sleep(15);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 23, 0, 0);
+			Sleep(15);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 23, 0, 0);
+			Sleep(17);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 23, 0, 0);
+			for (int i = 0; i < 2; i++) {
+				Sleep(15);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 21, 0, 0);
+				Sleep(15);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 21, 0, 0);
+				Sleep(17);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 21, 0, 0);
+			}
+			
+			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			Sleep(10);
+			mouse_event(MOUSEEVENTF_MOVE, 8, 8, 0, 0);
+
 		}
-/*
+
+
+/*		// ssg and dmr recoil
 		if ((GetKeyState(VK_OEM_MINUS) & 0x100) != 0) {
 			if (calFactor == 0.8) {
 				calFactor = 2;
@@ -154,7 +171,7 @@ void passiveRecoilCompensation() { //
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 			Sleep(6);
 		}
-	*/	
+*/	
 		Sleep(1);
 	}
 }
@@ -216,7 +233,6 @@ int main() {
 
 	RGBQUAD* curr;
 	int preScanCount = 20;
-	bool preScanComplete = false;
 
 	while (1) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
