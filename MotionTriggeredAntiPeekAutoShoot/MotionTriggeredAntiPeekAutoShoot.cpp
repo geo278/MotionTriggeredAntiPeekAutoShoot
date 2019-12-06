@@ -141,7 +141,7 @@ void passiveRecoilCompensation() { //
 			mouse_event(MOUSEEVENTF_MOVE, 0, 16, 0, 0);
 			for (int i = 0; i < 9; i++) {
 				Sleep(19);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 11, 0, 0);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
 			}
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 			Sleep(5);
@@ -155,8 +155,6 @@ void passiveRecoilCompensation() { //
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 			Sleep(5);
 		}
-
-
 
 /*		// ssg and dmr recoil
 		if ((GetKeyState(VK_OEM_MINUS) & 0x100) != 0) {
@@ -210,7 +208,8 @@ void passiveLeaning() {
 	_VK_NUMPAD5_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
 	while(1) {
-		if (((GetKeyState(0x33) & 0x100) != 0) && enabled) { // 3 key cuases left lean
+		//if (((GetKeyState(0x33) & 0x100) != 0) && enabled) { // 3 key cuases left lean
+		if (((GetKeyState(0x51) & 0x100) != 0) && enabled) { // Q key cuases left lean
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
 			Sleep(200);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
@@ -225,14 +224,15 @@ void passiveLeaning() {
 			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
 			Sleep(250);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
-			Sleep(150);
+			Sleep(32);
 			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
 
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			Sleep(20);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 		}
-		if (((GetKeyState(0x34) & 0x100) != 0) && enabled) { // 4 key cuases left lean
+		//if (((GetKeyState(0x34) & 0x100) != 0) && enabled) { // 4 key cuases left lean
+		if (((GetKeyState(0x45) & 0x100) != 0) && enabled) { // E key cuases left lean
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			Sleep(200);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
@@ -247,7 +247,7 @@ void passiveLeaning() {
 			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
 			Sleep(250);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
-			Sleep(150);
+			Sleep(32);
 			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
 
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
