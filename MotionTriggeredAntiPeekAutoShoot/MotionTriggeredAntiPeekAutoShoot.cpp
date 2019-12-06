@@ -118,6 +118,7 @@ void shoot() {
 
 void passiveRecoilCompensation() { //
 	double calFactor = 0.8;
+	bool primaryEnabled = true;
 	INPUT _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyDown.type = INPUT_KEYBOARD;
 	_VK_NUMPAD0_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD0, MAPVK_VK_TO_VSC); // hardware scan code
@@ -128,18 +129,33 @@ void passiveRecoilCompensation() { //
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while(1) {
-		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
-			//SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-
-
-			//for (int i = 0; i < 10; i++) {
-				Sleep(10);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 7, 0, 0);
-			//}
-			
-			//SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			//Sleep(12);
+		if ((GetKeyState(0x31) & 0x100) != 0) {
+			primaryEnabled = true;
 		}
+		if ((GetKeyState(0x32) & 0x100) != 0) {
+			primaryEnabled = false;
+		}
+		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
+			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			Sleep(9);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0);
+			for (int i = 0; i < 9; i++) {
+				Sleep(19);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 12, 0, 0);
+			}
+			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			Sleep(5);
+		}
+		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && !primaryEnabled) {
+			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			for (int i = 0; i < 10; i++) {
+				Sleep(11);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 4, 0, 0);
+			}
+			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			Sleep(5);
+		}
+
 
 
 /*		// ssg and dmr recoil
