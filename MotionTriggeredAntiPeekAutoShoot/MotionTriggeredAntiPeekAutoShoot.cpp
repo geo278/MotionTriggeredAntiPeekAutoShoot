@@ -129,12 +129,16 @@ void passiveRecoilCompensation() { //
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while(1) {
+		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
+			Sleep(10);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 6, 0, 0);
+		}
+/*
 		if ((GetKeyState(0x31) & 0x100) != 0) {
-			primaryEnabled = true;
+			primaryEnabled = !primaryEnabled;
+			Sleep(200);
 		}
-		if ((GetKeyState(0x32) & 0x100) != 0) {
-			primaryEnabled = false;
-		}
+
 		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
 			Sleep(9);
@@ -156,7 +160,7 @@ void passiveRecoilCompensation() { //
 			Sleep(5);
 		}
 
-/*		// ssg and dmr recoil
+		// ssg and dmr recoil
 		if ((GetKeyState(VK_OEM_MINUS) & 0x100) != 0) {
 			if (calFactor == 0.8) {
 				calFactor = 2;
@@ -208,8 +212,8 @@ void passiveLeaning() {
 	_VK_NUMPAD5_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
 	while(1) {
-		//if (((GetKeyState(0x33) & 0x100) != 0) && enabled) { // 3 key cuases left lean
-		if (((GetKeyState(0x51) & 0x100) != 0) && enabled) { // Q key cuases left lean
+		if (((GetKeyState(0x33) & 0x100) != 0) && enabled) { // 2 key cuases left lean
+		//if (((GetKeyState(0x51) & 0x100) != 0) && enabled) { // Q key cuases left lean
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
 			Sleep(200);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
@@ -231,8 +235,8 @@ void passiveLeaning() {
 			Sleep(20);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 		}
-		//if (((GetKeyState(0x34) & 0x100) != 0) && enabled) { // 4 key cuases left lean
-		if (((GetKeyState(0x45) & 0x100) != 0) && enabled) { // E key cuases left lean
+		if (((GetKeyState(0x34) & 0x100) != 0) && enabled) { // 3 key cuases left lean
+		//if (((GetKeyState(0x45) & 0x100) != 0) && enabled) { // E key cuases left lean
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			Sleep(200);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
