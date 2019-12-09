@@ -212,11 +212,11 @@ void passiveLeaning() {
 	_VK_NUMPAD5_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
 	while(1) {
-		if (((GetKeyState(0x33) & 0x100) != 0) && enabled) { // 2 key cuases left lean
+		if (((GetKeyState(0x33) & 0x100) != 0) && enabled) { // 3 key cuases left lean
 		//if (((GetKeyState(0x51) & 0x100) != 0) && enabled) { // Q key cuases left lean
-			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			Sleep(200);
-			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
+			//Sleep(200);
+			//SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
 
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
@@ -224,22 +224,22 @@ void passiveLeaning() {
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
 
-			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
 			Sleep(250);
-			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 			Sleep(32);
 			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
 
-			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			Sleep(20);
-			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
+			//Sleep(20);
+			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 		}
-		if (((GetKeyState(0x34) & 0x100) != 0) && enabled) { // 3 key cuases left lean
+		if (((GetKeyState(0x34) & 0x100) != 0) && enabled) { // 4 key cuases left lean
 		//if (((GetKeyState(0x45) & 0x100) != 0) && enabled) { // E key cuases left lean
-			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			Sleep(200);
-			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
+			//Sleep(200);
+			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
@@ -247,16 +247,16 @@ void passiveLeaning() {
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
 
-			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
 			Sleep(250);
-			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
 			Sleep(32);
 			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
 
-			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			Sleep(20);
-			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
+			//Sleep(20);
+			//SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
 		}
 		Sleep(1);
 	}
