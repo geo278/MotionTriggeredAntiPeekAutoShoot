@@ -131,7 +131,7 @@ void passiveRecoilCompensation() { //
 	while(1) {
 		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
 			Sleep(10);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 5, 0, 0);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 3, 0, 0);
 		}
 /*
 		if ((GetKeyState(0x31) & 0x100) != 0) {
