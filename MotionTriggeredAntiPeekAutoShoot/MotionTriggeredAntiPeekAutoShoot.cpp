@@ -9,8 +9,8 @@ using namespace std;
 
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-int width = 10;
-int height = 10;
+int width = 8;
+int height = 8;
 bool enabled = true;
 bool preScanComplete = false;
 
@@ -186,6 +186,7 @@ void passiveRecoilCompensation() { //
 		Sleep(1);
 	}
 }
+
 void passiveLeaning() {
 	INPUT _VK_NUMPAD1_keyDown;
 	_VK_NUMPAD1_keyDown.type = INPUT_KEYBOARD;
@@ -196,6 +197,7 @@ void passiveLeaning() {
 	_VK_NUMPAD1_keyDown.ki.dwFlags = 0; // 0 for key down
 	INPUT _VK_NUMPAD1_keyUp = _VK_NUMPAD1_keyDown;
 	_VK_NUMPAD1_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
+
 	INPUT _VK_NUMPAD2_keyDown = _VK_NUMPAD1_keyDown;
 	_VK_NUMPAD2_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD2, MAPVK_VK_TO_VSC); // hardware scan code
 	_VK_NUMPAD2_keyDown.ki.wVk = VK_NUMPAD2; // virtual-key code
@@ -208,29 +210,30 @@ void passiveLeaning() {
 	INPUT _VK_NUMPAD4_keyUp = _VK_NUMPAD4_keyDown;
 	_VK_NUMPAD4_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
-
 	INPUT _VK_NUMPAD5_keyDown = _VK_NUMPAD1_keyDown;
 	_VK_NUMPAD5_keyDown.ki.wScan = MapVirtualKey(VK_NUMPAD5, MAPVK_VK_TO_VSC); // hardware scan code
 	_VK_NUMPAD5_keyDown.ki.wVk = VK_NUMPAD5; // virtual-key code
 	INPUT _VK_NUMPAD5_keyUp = _VK_NUMPAD5_keyDown;
 	_VK_NUMPAD5_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
+	int strafeWidth = 300;
+
 	while(1) {
-		// if (((GetKeyState(0x33) & 0x100) != 0) && enabled) { // 3 key cuases left lean
-		if (((GetKeyState(0x51) & 0x100) != 0) && enabled) { // Q key cuases left lean
+		if (((GetKeyState(0x31) & 0x100) != 0) && enabled) { // 1 key cuases left lean
+		// if (((GetKeyState(0x51) & 0x100) != 0) && enabled) { // Q key cuases left lean
 			//SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
 			//Sleep(200);
 			//SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
 
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
-			Sleep(280);
+			Sleep(strafeWidth);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
 
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
-			Sleep(280);
+			Sleep(strafeWidth);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 			Sleep(32);
 			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
@@ -239,21 +242,21 @@ void passiveLeaning() {
 			//Sleep(20);
 			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 		}
-		//if (((GetKeyState(0x34) & 0x100) != 0) && enabled) { // 4 key cuases left lean
-		if (((GetKeyState(0x45) & 0x100) != 0) && enabled) { // E key cuases left lean
+		if (((GetKeyState(0x33) & 0x100) != 0) && enabled) { // 3 key cuases left lean
+		// if (((GetKeyState(0x45) & 0x100) != 0) && enabled) { // E key cuases left lean
 			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			//Sleep(200);
 			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
-			Sleep(280);
+			Sleep(strafeWidth);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
 
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
 			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
-			Sleep(280);
+			Sleep(strafeWidth);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
 			Sleep(32);
 			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
@@ -265,6 +268,7 @@ void passiveLeaning() {
 		Sleep(1);
 	}
 }
+
 void trackEnabled() {
 	while (1) {
 		while ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
@@ -278,7 +282,7 @@ void trackEnabled() {
 
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
-	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT a, b;
