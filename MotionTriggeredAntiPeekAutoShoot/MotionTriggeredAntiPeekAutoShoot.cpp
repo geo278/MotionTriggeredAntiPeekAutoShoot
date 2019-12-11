@@ -213,7 +213,7 @@ void passiveLeaning() {
 	INPUT _VK_NUMPAD5_keyUp = _VK_NUMPAD5_keyDown;
 	_VK_NUMPAD5_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
-	int strafeWidth = 300;
+	int strafeWidth = 260;
 
 	while(1) {
 		if (((GetKeyState(0x31) & 0x100) != 0) && enabled) { // 1 key cuases left lean
@@ -232,14 +232,14 @@ void passiveLeaning() {
 			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
 			Sleep(strafeWidth);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
-			Sleep(32);
+			Sleep(9);
 			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
 
 			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			//Sleep(20);
 			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 		}
-		if (((GetKeyState(0x33) & 0x100 || (GetKeyState(0x34) & 0x100) != 0) && enabled) { // 3 or 4 key cuases left lean
+		if ((((GetKeyState(0x33) & 0x100) != 0) || (GetKeyState(0x34) & 0x100) != 0) && enabled) { // 3 or 4 key cuases left lean
 		// if (((GetKeyState(0x45) & 0x100) != 0) && enabled) { // E key cuases left lean
 			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			//Sleep(200);
@@ -255,7 +255,7 @@ void passiveLeaning() {
 			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
 			Sleep(strafeWidth);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
-			Sleep(32);
+			Sleep(9);
 			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
 
 			//SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
