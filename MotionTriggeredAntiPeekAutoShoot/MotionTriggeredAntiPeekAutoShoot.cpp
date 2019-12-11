@@ -109,11 +109,8 @@ void scanCoverageRoutine() {
 
 void shoot() {
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
-	Sleep(10);
-	//mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0); // First shot recoil additional dampening
-	Sleep(90);
+	Sleep(100);
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
-	Sleep(10);
 }
 
 void passiveRecoilCompensation() { //
@@ -242,7 +239,7 @@ void passiveLeaning() {
 			//Sleep(20);
 			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 		}
-		if (((GetKeyState(0x33) & 0x100) != 0) && enabled) { // 3 key cuases left lean
+		if (((GetKeyState(0x33) & 0x100 || (GetKeyState(0x34) & 0x100) != 0) && enabled) { // 3 or 4 key cuases left lean
 		// if (((GetKeyState(0x45) & 0x100) != 0) && enabled) { // E key cuases left lean
 			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			//Sleep(200);
@@ -314,9 +311,9 @@ int main() {
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 				curr = scan(a, b);
 				if (findDifference(ignore, curr)) {
-					while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
+					//while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 						shoot();
-					}
+					//}
 					delete[] curr;
 					break;
 				}
