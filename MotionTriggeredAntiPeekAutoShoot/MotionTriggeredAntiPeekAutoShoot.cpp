@@ -114,7 +114,6 @@ void shoot() {
 }
 
 void passiveRecoilCompensation() { //
-	double calFactor = 0.8;
 	bool primaryEnabled = true;
 	INPUT _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyDown.type = INPUT_KEYBOARD;
@@ -126,20 +125,13 @@ void passiveRecoilCompensation() { //
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while(1) {
+/*
 		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
 			Sleep(10);
 			mouse_event(MOUSEEVENTF_MOVE, 0, 3, 0, 0);
 		}
-/*
-		if ((GetKeyState(0x31) & 0x100) != 0) {
-			primaryEnabled = true;
-			Sleep(200);
-		}
-		if ((GetKeyState(0x32) & 0x100) != 0) {
-			primaryEnabled = false;
-			Sleep(200);
-		}
 
+		// machine pistol
 		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
 			Sleep(9);
@@ -160,26 +152,24 @@ void passiveRecoilCompensation() { //
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 			Sleep(5);
 		}
-
+*/
 		// ssg and dmr recoil
-		if ((GetKeyState(VK_OEM_MINUS) & 0x100) != 0) {
-			if (calFactor == 0.8) {
-				calFactor = 2;
-			} else {
-				calFactor = 0.8;
-			}
-			cout << "calFactor: " << calFactor << endl;
-			Sleep(150);
+		if ((GetKeyState(0x31) & 0x100) != 0) {
+			primaryEnabled = true;
+			Sleep(200);
 		}
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
+		if ((GetKeyState(0x32) & 0x100) != 0) {
+			primaryEnabled = false;
+			Sleep(200);
+		}
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
 			Sleep(6);
-			mouse_event(MOUSEEVENTF_MOVE, 0, (int)16 * calFactor, 0, 0);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 32, 0, 0);
 			Sleep(6);
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 			Sleep(6);
 		}
-*/	
 		Sleep(1);
 	}
 }
@@ -213,54 +203,22 @@ void passiveLeaning() {
 	INPUT _VK_NUMPAD5_keyUp = _VK_NUMPAD5_keyDown;
 	_VK_NUMPAD5_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
-	int strafeWidth = 260;
-
 	while(1) {
-		if (((GetKeyState(0x31) & 0x100) != 0) && enabled) { // 1 key cuases left lean
-		// if (((GetKeyState(0x51) & 0x100) != 0) && enabled) { // Q key cuases left lean
-			//SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			//Sleep(200);
-			//SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
-
+		if (((GetKeyState(0x41) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) == 0) && enabled) { // A key cuases left lean
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
-			Sleep(strafeWidth);
+			Sleep(20);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
-
-			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
-			Sleep(strafeWidth);
-			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
-			Sleep(9);
-			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
-
-			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			//Sleep(20);
-			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
+			while (((GetKeyState(0x41) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) == 0) && enabled) {
+				Sleep(20);
+			}
 		}
-		if ((((GetKeyState(0x33) & 0x100) != 0) || (GetKeyState(0x34) & 0x100) != 0) && enabled) { // 3 or 4 key cuases left lean
-		// if (((GetKeyState(0x45) & 0x100) != 0) && enabled) { // E key cuases left lean
-			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			//Sleep(200);
-			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
-
+		if (((GetKeyState(0x44) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) == 0) && enabled) { // D key cuases left lean
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
-			Sleep(strafeWidth);
+			Sleep(20);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
-
-			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
-			Sleep(strafeWidth);
-			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
-			Sleep(9);
-			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
-
-			//SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			//Sleep(20);
-			//SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
+			while (((GetKeyState(0x44) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) == 0) && enabled) {
+				Sleep(20);
+			}
 		}
 		Sleep(1);
 	}
@@ -268,10 +226,9 @@ void passiveLeaning() {
 
 void trackEnabled() {
 	while (1) {
-		while ((GetKeyState(VK_CAPITAL) & 0x100) != 0) {
-			enabled = false;
-			Sleep(2000);
-			enabled = true;
+		while ((GetKeyState(VK_MENU) & 0x100) != 0) {
+			enabled = !enabled;
+			Sleep(200);
 		}
 		Sleep(2);
 	}
