@@ -72,11 +72,12 @@ POINT compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 					prevGreen = (int)prev[indexPrev].rgbGreen;
 					prevBlue = (int)prev[indexPrev].rgbBlue;
 					int absDifference = abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue);
-					if (absDifference > 30) {
+					if (absDifference < 30) {
+						break;
+					} else if (j == x + 2 && k == y + 2) {
 						motionDetected = true;
 						targetCoordinates.x = index % width;
 						targetCoordinates.y = index / width;
-						break;
 					}
 				}
 				if (motionDetected) {break;}
@@ -253,7 +254,7 @@ int main() {
 					motionDetected = false;
 					shoot(targetCoordiantes);
 					while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
-						Sleep(40);
+						Sleep(20);
 					}
 					delete[] curr;
 					break;
