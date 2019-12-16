@@ -9,10 +9,10 @@ using namespace std;
 
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-int width = 8;
-int height = 8;
+int width = 200;
+int height = 200;
 bool enabled = true;
-bool preScanComplete = false;
+bool motionDetected = false;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -44,46 +44,49 @@ RGBQUAD* scan(POINT a, POINT b) {
 	return pixels;
 }
 
-bool findDifference(vector<RGBQUAD>& ignore, RGBQUAD* curr, bool updateIgnore = false) {
-	bool result = false;
-	int ignoreRed, ignoreGreen, ignoreBlue, currRed, currGreen, currBlue;
-	if (ignore.size() == 0) {
-		ignore.push_back(curr[0]);
-	}
-	for (int i = 0; i < (width * height); i++) {
-		currRed = (int)curr[i].rgbRed;
-		currGreen = (int)curr[i].rgbGreen;
-		currBlue = (int)curr[i].rgbBlue;
-		for (unsigned int j = 0; j < ignore.size(); j++) {
-			ignoreRed = (int)ignore[j].rgbRed;
-			ignoreGreen = (int)ignore[j].rgbGreen;
-			ignoreBlue = (int)ignore[j].rgbBlue;
-			int absDifference = abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue);
-			if (updateIgnore) {
-				if (absDifference <= 6) {
-					break;
-				} else if (j == (ignore.size() - 1)) {
-					ignore.push_back(curr[i]);
+POINT compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
+	POINT targetCoordinates{width/2, height/2};
+	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue, x, y, prevX, prevY, index, indexPrev;
+	double radius = 1, angle = 2 * 3.141592654 * 3 / 4;;
+	const int sampleCount = 32;
+
+	for (int i = 0; i < (sampleCount * (width - 2)); i++) {
+		x = (int)(radius * cos(angle) + width / 2);
+		y = (int)(radius * sin(angle) + height / 2);
+		if (!(prevX == x && prevY == y)) {
+			if (i % sampleCount == 0) { // if ring is complete
+				radius++; // increment radius
+			}
+			angle += 2 * 3.141592654 / sampleCount; // increment angle each iteration
+			if (x < 2 || x > width - 3 || y < 2 || y > height - 3) { // boundary check
+				break;
+			}
+			index = y * width + x; // get 1d array index
+			currRed = (int)curr[index].rgbRed;
+			currGreen = (int)curr[index].rgbGreen;
+			currBlue = (int)curr[index].rgbBlue;
+			for (int j = x - 2; j < x + 2; j++) {
+				for (int k = y - 2; k < y + 2; k++) {
+					indexPrev = k * width + j;
+					prevRed = (int)prev[indexPrev].rgbRed;
+					prevGreen = (int)prev[indexPrev].rgbGreen;
+					prevBlue = (int)prev[indexPrev].rgbBlue;
+					int absDifference = abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue);
+					if (absDifference > 30) {
+						motionDetected = true;
+						targetCoordinates.x = index % width;
+						targetCoordinates.y = index / width;
+						break;
+					}
 				}
-			} else {
-				if (absDifference <= 6) {
-					break;
-				} else if (absDifference <= 30) {
-					ignore.push_back(curr[i]);
-					break;
-				} else if (j == (ignore.size() - 1) && (absDifference > 30)) {
-					//if (diffCount < 1) {
-					//	diffCount++;
-					//} else {
-					result = true;
-					//cout << currRed << " " << currGreen << " " << currBlue << "    " << j;
-					//}
-				}
+				if (motionDetected) {break;}
 			}
 		}
-		if (result && !updateIgnore) { break; }
+		prevX = x;
+		prevY = y;
+		if (motionDetected) { break; }
 	}
-	return result;
+	return targetCoordinates;
 }
 void scanCoverageRoutine() {
 	int i = 0;
@@ -107,7 +110,7 @@ void scanCoverageRoutine() {
 	}
 }
 
-void shoot() {
+void shoot(POINT targetCoordinates) {
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
 	Sleep(100);
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
@@ -255,38 +258,26 @@ int main() {
 	b.x = screenWidth / 2 + width / 2;
 	b.y = screenHeight / 2 + height / 2;
 
-	RGBQUAD* curr;
+	RGBQUAD* prev, curr;
 	int preScanCount = 20;
 
 	while (1) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
 			cout << "Activate motion trigger" << endl;
-
-			vector<RGBQUAD> ignore;
-			for (int i = 0; i < 30; i++) {
-				curr = scan(a, b);
-				findDifference(ignore, curr, true);
-				if (i == 0) {
-					preScanComplete = false;
-					CreateThread(0, 0, (LPTHREAD_START_ROUTINE)scanCoverageRoutine, 0, 0, 0);
-				}
-				delete[] curr;
-				Sleep(0);
-			}
-			preScanComplete = true;
-
+			prev = scan(a, b);
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 				curr = scan(a, b);
-				if (findDifference(ignore, curr)) {
-					//while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
-						shoot();
-					//}
+				POINT targetCoordiantes = compareFrames(ignore, curr);
+				if (motionDetected) {
+					motionDetected = false;
+						shoot(targetCoordiantes);
 					delete[] curr;
 					break;
 				}
+				prev = curr;
 				delete[] curr;
 			}
-			ignore.clear();
+			delete[] prev;
 			cout << "Release motion trigger" << endl;
 		}
 		Sleep(1);

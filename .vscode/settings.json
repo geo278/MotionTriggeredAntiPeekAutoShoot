@@ -1,6 +1,8 @@
 {
     "files.associations": {
         "chrono": "cpp",
-        "complex": "cpp"
+        "complex": "cpp",
+        "iterator": "cpp",
+        "ios": "cpp"
     }
 }
