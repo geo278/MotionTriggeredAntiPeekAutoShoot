@@ -90,10 +90,10 @@ POINT compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 }
 
 void shoot(POINT targetCoordinates) {
-				mouse_event(MOUSEEVENTF_MOVE, targetCoordinates.x - width / 2, targetCoordinates.y - height / 2, 0, 0);
-
+	double calibrationFactor = 1;
+	mouse_event(MOUSEEVENTF_MOVE, (int) calibrationFactor * (targetCoordinates.x - (width / 2)), (int) calibrationFactor * (targetCoordinates.y - (height / 2)), 0, 0);
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
-	Sleep(100);
+	Sleep(50);
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
 }
 
@@ -251,7 +251,10 @@ int main() {
 				POINT targetCoordiantes = compareFrames(ignore, curr);
 				if (motionDetected) {
 					motionDetected = false;
-						shoot(targetCoordiantes);
+					shoot(targetCoordiantes);
+					while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
+						Sleep(40);
+					}
 					delete[] curr;
 					break;
 				}
