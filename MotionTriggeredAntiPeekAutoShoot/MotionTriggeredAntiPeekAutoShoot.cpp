@@ -50,7 +50,7 @@ POINT compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 	double radius = 1, angle = 2 * 3.141592654 * 3 / 4;;
 	const int sampleCount = 32;
 
-	for (int i = 0; i < (sampleCount * (width - 2)); i++) {
+	for (int i = 0; i < (sampleCount * (width - 3)); i++) {
 		x = (int)(radius * cos(angle) + width / 2);
 		y = (int)(radius * sin(angle) + height / 2);
 		if (!(prevX == x && prevY == y)) {
@@ -58,7 +58,7 @@ POINT compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 				radius++; // increment radius
 			}
 			angle += 2 * 3.141592654 / sampleCount; // increment angle each iteration
-			if (x < 2 || x > width - 3 || y < 2 || y > height - 3) { // boundary check
+			if (x < 3 || x > width - 4 || y < 3 || y > height - 4) { // boundary check
 				break;
 			}
 			index = y * width + x; // get 1d array index
@@ -88,29 +88,10 @@ POINT compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 	}
 	return targetCoordinates;
 }
-void scanCoverageRoutine() {
-	int i = 0;
-	int k = 1;
-	while (!preScanComplete) {
-		if (i%2 == 0) {
-			k = 1;
-		} else {
-			k = -1;
-		}
-		mouse_event(MOUSEEVENTF_MOVE, k * i, 0, 0, 0);
-		Sleep(4);
-		mouse_event(MOUSEEVENTF_MOVE, 0, k * i, 0, 0);
-		Sleep(4);
-		i++;
-	}
-	if (k < 0) { // reset position
-		mouse_event(MOUSEEVENTF_MOVE, -k * (i / 2 + 1), -k * (i / 2 + 1), 0, 0);
-	} else {
-		mouse_event(MOUSEEVENTF_MOVE, -k * (i / 2 ), -k * (i / 2), 0, 0);
-	}
-}
 
 void shoot(POINT targetCoordinates) {
+				mouse_event(MOUSEEVENTF_MOVE, targetCoordinates.x - width / 2, targetCoordinates.y - height / 2, 0, 0);
+
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
 	Sleep(100);
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
