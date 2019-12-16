@@ -153,7 +153,6 @@ void passiveRecoilCompensation() { //
 			Sleep(5);
 		}
 */
-		// ssg and dmr recoil
 		if ((GetKeyState(0x31) & 0x100) != 0) {
 			primaryEnabled = true;
 			Sleep(200);
@@ -162,11 +161,22 @@ void passiveRecoilCompensation() { //
 			primaryEnabled = false;
 			Sleep(200);
 		}
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
+
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
+			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			for (int i = 0; i < 15; i++) {
+				Sleep(15);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
+			}
+			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			Sleep(6);
+		}
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled && !primaryEnabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
 			Sleep(6);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 32, 0, 0);
-			Sleep(6);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0);
+			Sleep(98);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0);
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 			Sleep(6);
 		}
@@ -237,7 +247,7 @@ void trackEnabled() {
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
 	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
-	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
+	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT a, b;
 	a.x = screenWidth / 2 - width / 2;
