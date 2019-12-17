@@ -9,8 +9,8 @@ using namespace std;
 
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-int width = 200;
-int height = 200;
+int width = 180;
+int height = 180;
 bool enabled = true;
 bool motionDetected = false;
 
@@ -46,41 +46,44 @@ RGBQUAD* scan(POINT a, POINT b) {
 
 POINT compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 	POINT targetCoordinates{width/2, height/2};
-	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue, x, y, prevX, prevY, index, indexPrev;
+	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue, x, y, prevX = width, prevY = height, index, indexPrev;
 	double radius = 1, angle = 2 * 3.141592654 * 3 / 4;;
 	const int sampleCount = 32;
-
 	for (int i = 0; i < (sampleCount * (width - 3)); i++) {
 		x = (int)(radius * cos(angle) + width / 2);
 		y = (int)(radius * sin(angle) + height / 2);
+		if (i % sampleCount == 0) { // if ring is complete
+			radius++; // increment radius
+		}
+		angle += 2 * 3.141592654 / sampleCount; // increment angle each iteration
+		if (x < 3 || x > width - 4 || y < 3 || y > height - 4) { // boundary check
+			break;
+		}
 		if (!(prevX == x && prevY == y)) {
-			if (i % sampleCount == 0) { // if ring is complete
-				radius++; // increment radius
-			}
-			angle += 2 * 3.141592654 / sampleCount; // increment angle each iteration
-			if (x < 3 || x > width - 4 || y < 3 || y > height - 4) { // boundary check
-				break;
-			}
 			index = y * width + x; // get 1d array index
 			currRed = (int)curr[index].rgbRed;
 			currGreen = (int)curr[index].rgbGreen;
 			currBlue = (int)curr[index].rgbBlue;
-			for (int j = x - 2; j < x + 2; j++) {
-				for (int k = y - 2; k < y + 2; k++) {
+			int test = 0;
+			bool matching = false;
+			for (int j = x - 2; j <= x + 2; j++) {
+				for (int k = y - 2; k <= y + 2; k++) {
 					indexPrev = k * width + j;
 					prevRed = (int)prev[indexPrev].rgbRed;
 					prevGreen = (int)prev[indexPrev].rgbGreen;
 					prevBlue = (int)prev[indexPrev].rgbBlue;
 					int absDifference = abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue);
 					if (absDifference < 30) {
+						matching = true;
 						break;
 					} else if (j == x + 2 && k == y + 2) {
 						motionDetected = true;
 						targetCoordinates.x = index % width;
 						targetCoordinates.y = index / width;
+						
 					}
 				}
-				if (motionDetected) {break;}
+				if (matching || motionDetected) { break; }
 			}
 		}
 		prevX = x;
@@ -91,10 +94,11 @@ POINT compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 }
 
 void shoot(POINT targetCoordinates) {
-	double calibrationFactor = 1;
+	cout << targetCoordinates.x << " " << targetCoordinates.y << endl;
+	double calibrationFactor = 5.5;
 	mouse_event(MOUSEEVENTF_MOVE, (int) calibrationFactor * (targetCoordinates.x - (width / 2)), (int) calibrationFactor * (targetCoordinates.y - (height / 2)), 0, 0);
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
-	Sleep(50);
+	Sleep(150);
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
 }
 
@@ -240,16 +244,21 @@ int main() {
 	b.x = screenWidth / 2 + width / 2;
 	b.y = screenHeight / 2 + height / 2;
 
-	RGBQUAD* prev, curr;
+	RGBQUAD* prev;
+	RGBQUAD* curr;
 	int preScanCount = 20;
 
 	while (1) {
+		//if ((GetKeyState(VK_MENU) & 0x100) != 0) {
+		//	mouse_event(MOUSEEVENTF_MOVE, 0, 89, 0, 0);
+		//	Sleep(300);
+		//}
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
 			cout << "Activate motion trigger" << endl;
 			prev = scan(a, b);
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 				curr = scan(a, b);
-				POINT targetCoordiantes = compareFrames(ignore, curr);
+				POINT targetCoordiantes = compareFrames(prev, curr);
 				if (motionDetected) {
 					motionDetected = false;
 					shoot(targetCoordiantes);
@@ -259,11 +268,13 @@ int main() {
 					delete[] curr;
 					break;
 				}
+				
+				delete[] prev;
 				prev = curr;
-				delete[] curr;
 			}
-			delete[] prev;
+			//delete[] prev;
 			cout << "Release motion trigger" << endl;
+			cout << "" << endl;
 		}
 		Sleep(1);
 	}
