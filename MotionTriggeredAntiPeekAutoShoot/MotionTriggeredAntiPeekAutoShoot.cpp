@@ -46,19 +46,23 @@ RGBQUAD* scan(POINT a, POINT b) {
 bool compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
 	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue, x, y, prevX = width, prevY = height, index, indexPrev;
-	double radius = 1, angle = 2 * 3.141592654 * 3 / 4;;
-	const int sampleCount = 32;
+	int absDifference;
 	for (int i = 0; i < width; i++) {
-		prevRed = (int)prev[i].rgbRed;
-		prevGreen = (int)prev[i].rgbGreen;
-		prevBlue = (int)prev[i].rgbBlue;
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
-		int absDifference = abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue);
-		if (absDifference > 30) {
-			result = true;
+		for (int j = 0; j < width * height; j++) {
+			prevRed = (int)prev[j].rgbRed;
+			prevGreen = (int)prev[j].rgbGreen;
+			prevBlue = (int)prev[j].rgbBlue;
+			absDifference = abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue);
+			if (absDifference < 30) {
+				break;
+			} else if (j == width * height - 1) {
+				result = true;
+			}
 		}
+		if (absDifference < 30) {break;}
 	}
 	return result;
 }
