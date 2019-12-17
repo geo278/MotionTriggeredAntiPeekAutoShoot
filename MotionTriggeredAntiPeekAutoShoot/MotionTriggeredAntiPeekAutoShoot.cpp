@@ -44,9 +44,7 @@ RGBQUAD* scan(POINT a, POINT b) {
 }
 
 bool compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
-	bool result = false;
-	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue, x, y, prevX = width, prevY = height, index, indexPrev;
-	int absDifference;
+	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue, absDifference;
 	for (int i = 0; i < width; i++) {
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
@@ -57,14 +55,12 @@ bool compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 			prevBlue = (int)prev[j].rgbBlue;
 			absDifference = abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue);
 			if (absDifference < 30) {
-				break;
+				return false;
 			} else if (j == width * height - 1) {
-				result = true;
+				return true;
 			}
 		}
-		if (absDifference < 30) {break;}
 	}
-	return result;
 }
 
 void shoot() {
