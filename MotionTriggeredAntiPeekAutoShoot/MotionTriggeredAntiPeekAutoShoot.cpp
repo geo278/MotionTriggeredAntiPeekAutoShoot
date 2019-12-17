@@ -221,7 +221,6 @@ int main() {
 			cout << "Activate motion trigger" << endl;
 			prev = scan(a, b);
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
-				Sleep(20);
 				curr = scan(a, b);
 				if (compareFrames(prev, curr)) {
 					shoot();
