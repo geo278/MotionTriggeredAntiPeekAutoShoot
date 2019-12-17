@@ -55,12 +55,13 @@ bool compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 			prevBlue = (int)prev[j].rgbBlue;
 			absDifference = abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue);
 			if (absDifference < 30) {
-				return false;
+				break;
 			} else if (j == width * height - 1) {
 				return true;
 			}
 		}
 	}
+	return false;
 }
 
 void shoot() {
