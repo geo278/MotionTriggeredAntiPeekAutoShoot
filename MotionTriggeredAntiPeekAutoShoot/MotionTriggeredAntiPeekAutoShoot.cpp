@@ -80,15 +80,14 @@ POINT compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 						motionDetected = true;
 						targetCoordinates.x = index % width;
 						targetCoordinates.y = index / width;
-						
+						return targetCoordinates;
 					}
 				}
-				if (matching || motionDetected) { break; }
+				if (matching) { break; }
 			}
 		}
 		prevX = x;
 		prevY = y;
-		if (motionDetected) { break; }
 	}
 	return targetCoordinates;
 }
