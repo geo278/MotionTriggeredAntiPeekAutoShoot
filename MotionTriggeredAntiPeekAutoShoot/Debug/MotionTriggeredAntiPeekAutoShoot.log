@@ -1,2 +1,6 @@
 ﻿  MotionTriggeredAntiPeekAutoShoot.cpp
+C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot.cpp(48,110): warning C4101: 'indexPrev': unreferenced local variable
+C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot.cpp(48,69): warning C4101: 'y': unreferenced local variable
+C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot.cpp(48,103): warning C4101: 'index': unreferenced local variable
+C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot\MotionTriggeredAntiPeekAutoShoot.cpp(48,66): warning C4101: 'x': unreferenced local variable
   MotionTriggeredAntiPeekAutoShoot.vcxproj -> C:\Users\georg\Documents\GitHub\MotionTriggeredAntiPeekAutoShoot\Debug\MotionTriggeredAntiPeekAutoShoot.exe

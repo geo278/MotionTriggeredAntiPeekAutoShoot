@@ -9,10 +9,9 @@ using namespace std;
 
 int screenWidth = GetSystemMetrics(SM_CXSCREEN);
 int screenHeight = GetSystemMetrics(SM_CYSCREEN);
-int width = 8;
-int height = 8;
+int width = 6;
+int height = 6;
 bool enabled = true;
-bool preScanComplete = false;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -44,72 +43,29 @@ RGBQUAD* scan(POINT a, POINT b) {
 	return pixels;
 }
 
-bool findDifference(vector<RGBQUAD>& ignore, RGBQUAD* curr, bool updateIgnore = false) {
+bool compareFrames(RGBQUAD* prev, RGBQUAD* curr) {
 	bool result = false;
-	int ignoreRed, ignoreGreen, ignoreBlue, currRed, currGreen, currBlue;
-	if (ignore.size() == 0) {
-		ignore.push_back(curr[0]);
-	}
-	for (int i = 0; i < (width * height); i++) {
+	int prevRed, prevGreen, prevBlue, currRed, currGreen, currBlue, x, y, prevX = width, prevY = height, index, indexPrev;
+	double radius = 1, angle = 2 * 3.141592654 * 3 / 4;;
+	const int sampleCount = 32;
+	for (int i = 0; i < width; i++) {
+		prevRed = (int)prev[i].rgbRed;
+		prevGreen = (int)prev[i].rgbGreen;
+		prevBlue = (int)prev[i].rgbBlue;
 		currRed = (int)curr[i].rgbRed;
 		currGreen = (int)curr[i].rgbGreen;
 		currBlue = (int)curr[i].rgbBlue;
-		for (unsigned int j = 0; j < ignore.size(); j++) {
-			ignoreRed = (int)ignore[j].rgbRed;
-			ignoreGreen = (int)ignore[j].rgbGreen;
-			ignoreBlue = (int)ignore[j].rgbBlue;
-			int absDifference = abs(currRed - ignoreRed) + abs(currGreen - ignoreGreen) + abs(currBlue - ignoreBlue);
-			if (updateIgnore) {
-				if (absDifference <= 6) {
-					break;
-				} else if (j == (ignore.size() - 1)) {
-					ignore.push_back(curr[i]);
-				}
-			} else {
-				if (absDifference <= 6) {
-					break;
-				} else if (absDifference <= 30) {
-					ignore.push_back(curr[i]);
-					break;
-				} else if (j == (ignore.size() - 1) && (absDifference > 30)) {
-					//if (diffCount < 1) {
-					//	diffCount++;
-					//} else {
-					result = true;
-					//cout << currRed << " " << currGreen << " " << currBlue << "    " << j;
-					//}
-				}
-			}
+		int absDifference = abs(currRed - prevRed) + abs(currGreen - prevGreen) + abs(currBlue - prevBlue);
+		if (absDifference > 30) {
+			result = true;
 		}
-		if (result && !updateIgnore) { break; }
 	}
 	return result;
-}
-void scanCoverageRoutine() {
-	int i = 0;
-	int k = 1;
-	while (!preScanComplete) {
-		if (i%2 == 0) {
-			k = 1;
-		} else {
-			k = -1;
-		}
-		mouse_event(MOUSEEVENTF_MOVE, k * i, 0, 0, 0);
-		Sleep(4);
-		mouse_event(MOUSEEVENTF_MOVE, 0, k * i, 0, 0);
-		Sleep(4);
-		i++;
-	}
-	if (k < 0) { // reset position
-		mouse_event(MOUSEEVENTF_MOVE, -k * (i / 2 + 1), -k * (i / 2 + 1), 0, 0);
-	} else {
-		mouse_event(MOUSEEVENTF_MOVE, -k * (i / 2 ), -k * (i / 2), 0, 0);
-	}
 }
 
 void shoot() {
 	mouse_event(MOUSEEVENTF_LEFTDOWN, 0, 0, 0, 0); // start left click
-	Sleep(100);
+	Sleep(200);
 	mouse_event(MOUSEEVENTF_LEFTUP, 0, 0, 0, 0); // finish Left click
 }
 
@@ -124,35 +80,35 @@ void passiveRecoilCompensation() { //
 	_VK_NUMPAD0_keyDown.ki.dwFlags = 0; // 0 for key down
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
-	while(1) {
-/*
-		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
-			Sleep(10);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 3, 0, 0);
-		}
+	while (1) {
+		/*
+				if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
+					Sleep(10);
+					mouse_event(MOUSEEVENTF_MOVE, 0, 3, 0, 0);
+				}
 
-		// machine pistol
-		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
-			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			Sleep(9);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 16, 0, 0);
-			for (int i = 0; i < 9; i++) {
-				Sleep(19);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
-			}
-			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(5);
-		}
-		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && !primaryEnabled) {
-			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			for (int i = 0; i < 10; i++) {
-				Sleep(11);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 4, 0, 0);
-			}
-			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(5);
-		}
-*/
+				// machine pistol
+				if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
+					SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+					Sleep(9);
+					mouse_event(MOUSEEVENTF_MOVE, 0, 16, 0, 0);
+					for (int i = 0; i < 9; i++) {
+						Sleep(19);
+						mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
+					}
+					SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+					Sleep(5);
+				}
+				if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && !primaryEnabled) {
+					SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+					for (int i = 0; i < 10; i++) {
+						Sleep(11);
+						mouse_event(MOUSEEVENTF_MOVE, 0, 4, 0, 0);
+					}
+					SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+					Sleep(5);
+				}
+		*/
 		if ((GetKeyState(0x31) & 0x100) != 0) {
 			primaryEnabled = true;
 			Sleep(200);
@@ -213,7 +169,7 @@ void passiveLeaning() {
 	INPUT _VK_NUMPAD5_keyUp = _VK_NUMPAD5_keyDown;
 	_VK_NUMPAD5_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
-	while(1) {
+	while (1) {
 		if (((GetKeyState(0x41) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) == 0) && enabled) { // A key cuases left lean
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
 			Sleep(20);
@@ -245,7 +201,7 @@ void trackEnabled() {
 }
 
 int main() {
-	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE)passiveRecoilCompensation, 0, 0, 0);
 	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
@@ -255,39 +211,30 @@ int main() {
 	b.x = screenWidth / 2 + width / 2;
 	b.y = screenHeight / 2 + height / 2;
 
+	RGBQUAD* prev;
 	RGBQUAD* curr;
 	int preScanCount = 20;
 
 	while (1) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
 			cout << "Activate motion trigger" << endl;
-
-			vector<RGBQUAD> ignore;
-			for (int i = 0; i < 30; i++) {
-				curr = scan(a, b);
-				findDifference(ignore, curr, true);
-				if (i == 0) {
-					preScanComplete = false;
-					CreateThread(0, 0, (LPTHREAD_START_ROUTINE)scanCoverageRoutine, 0, 0, 0);
-				}
-				delete[] curr;
-				Sleep(0);
-			}
-			preScanComplete = true;
-
+			prev = scan(a, b);
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
+				Sleep(20);
 				curr = scan(a, b);
-				if (findDifference(ignore, curr)) {
-					//while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
-						shoot();
-					//}
+				if (compareFrames(prev, curr)) {
+					shoot();
+					while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
+						Sleep(20);
+					}
 					delete[] curr;
 					break;
 				}
-				delete[] curr;
+				delete[] prev;
+				prev = curr;
 			}
-			ignore.clear();
 			cout << "Release motion trigger" << endl;
+			cout << "" << endl;
 		}
 		Sleep(1);
 	}
