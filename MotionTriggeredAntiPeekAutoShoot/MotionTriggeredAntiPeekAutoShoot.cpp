@@ -170,22 +170,50 @@ void passiveLeaning() {
 	INPUT _VK_NUMPAD5_keyUp = _VK_NUMPAD5_keyDown;
 	_VK_NUMPAD5_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
+	INPUT _C_keyDown = _VK_NUMPAD1_keyDown;
+	_C_keyDown.ki.wScan = MapVirtualKey(0x43, MAPVK_VK_TO_VSC); // hardware scan code
+	_C_keyDown.ki.wVk = 0x43; // virtual-key code
+	INPUT _C_keyUp = _C_keyDown;
+	_C_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
+
 	while (1) {
-		if (((GetKeyState(0x41) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) == 0) && enabled) { // A key cuases left lean
+		if (((GetKeyState(VK_SHIFT) & 0x100) != 0) && ((GetKeyState(0x41) & 0x100) != 0) && enabled) { // A key cuases left lean
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			Sleep(20);
+			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
+			SendInput(1, &_C_keyDown, sizeof(INPUT));
+			Sleep(50);
+			SendInput(1, &_C_keyUp, sizeof(INPUT));
+			Sleep(200);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
-			while (((GetKeyState(0x41) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) == 0) && enabled) {
-				Sleep(20);
-			}
+			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
+//
+			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
+			SendInput(1, &_C_keyDown, sizeof(INPUT));
+			Sleep(50);
+			SendInput(1, &_C_keyUp, sizeof(INPUT));
+			Sleep(200);
+			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
 		}
-		if (((GetKeyState(0x44) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) == 0) && enabled) { // D key cuases left lean
+		if (((GetKeyState(VK_SHIFT) & 0x100) != 0) && ((GetKeyState(0x44) & 0x100) != 0) && enabled) { // D key cuases left lean
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			Sleep(20);
+			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
+			SendInput(1, &_C_keyDown, sizeof(INPUT));
+			Sleep(50);
+			SendInput(1, &_C_keyUp, sizeof(INPUT));
+			Sleep(200);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
-			while (((GetKeyState(0x44) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) == 0) && enabled) {
-				Sleep(20);
-			}
+			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
+//
+			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
+			SendInput(1, &_C_keyDown, sizeof(INPUT));
+			Sleep(50);
+			SendInput(1, &_C_keyUp, sizeof(INPUT));
+			Sleep(200);
+			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
+			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
 		}
 		Sleep(1);
 	}
@@ -202,8 +230,8 @@ void trackEnabled() {
 }
 
 int main() {
-	CreateThread(0, 0, (LPTHREAD_START_ROUTINE)passiveRecoilCompensation, 0, 0, 0);
-	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT a, b;
