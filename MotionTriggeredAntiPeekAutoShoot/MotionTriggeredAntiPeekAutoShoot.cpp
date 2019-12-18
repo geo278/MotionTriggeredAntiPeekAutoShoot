@@ -126,7 +126,7 @@ void passiveRecoilCompensation() { //
 				mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
 			}
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(6);
+			Sleep(10);
 		}
 		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled && !primaryEnabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
