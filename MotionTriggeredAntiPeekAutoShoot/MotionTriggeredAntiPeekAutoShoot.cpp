@@ -233,10 +233,9 @@ int main() {
 				delete[] prev;
 				prev = curr;
 			}
-			cout << "Release motion trigger" << endl;
-			cout << "" << endl;
+			cout << "Release motion trigger" << endl << endl;
 		}
-		Sleep(1);
+		Sleep(2);
 	}
 	return 0;
 }
