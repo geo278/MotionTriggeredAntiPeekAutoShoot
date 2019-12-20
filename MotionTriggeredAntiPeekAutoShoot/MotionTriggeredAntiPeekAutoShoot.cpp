@@ -177,43 +177,37 @@ void passiveLeaning() {
 	_C_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 
 	while (1) {
-		if (((GetKeyState(VK_RBUTTON) & 0x100) != 0) && ((GetKeyState(VK_SHIFT) & 0x100) != 0) && ((GetKeyState(0x41) & 0x100) != 0) && enabled) { // A key cuases left lean
+		if (((GetKeyState(VK_SHIFT) & 0x100) != 0) && ((GetKeyState(0x41) & 0x100) != 0) && enabled) { // A key cuases left lean
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
-			SendInput(1, &_C_keyDown, sizeof(INPUT));
-			Sleep(50);
-			SendInput(1, &_C_keyUp, sizeof(INPUT));
-			Sleep(220);
+			//SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
+			Sleep(20);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
+			while (((GetKeyState(0x41) & 0x100) != 0)) {
+				Sleep(20);
+			}
+			//SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
 //
-			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
-			SendInput(1, &_C_keyDown, sizeof(INPUT));
-			Sleep(50);
-			SendInput(1, &_C_keyUp, sizeof(INPUT));
-			Sleep(200);
-			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
+			//Sleep(250);
+			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
 		}
-		if (((GetKeyState(VK_RBUTTON) & 0x100) != 0) && ((GetKeyState(VK_SHIFT) & 0x100) != 0) && ((GetKeyState(0x44) & 0x100) != 0) && enabled) { // D key cuases left lean
+		if (((GetKeyState(VK_SHIFT) & 0x100) != 0) && ((GetKeyState(0x44) & 0x100) != 0) && enabled) { // D key cuases left lean
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
-			SendInput(1, &_C_keyDown, sizeof(INPUT));
-			Sleep(50);
-			SendInput(1, &_C_keyUp, sizeof(INPUT));
-			Sleep(220);
+			//SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
+			Sleep(20);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
+			while (((GetKeyState(0x44) & 0x100) != 0)) {
+				Sleep(20);
+			}
+			//SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
 //
-			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
-			SendInput(1, &_C_keyDown, sizeof(INPUT));
-			Sleep(50);
-			SendInput(1, &_C_keyUp, sizeof(INPUT));
-			Sleep(200);
-			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
-			SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
+			//Sleep(250);
+			//SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
+			//SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
 		}
 		Sleep(1);
 	}
