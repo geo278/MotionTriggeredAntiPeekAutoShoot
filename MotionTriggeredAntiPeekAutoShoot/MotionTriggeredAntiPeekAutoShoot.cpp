@@ -118,24 +118,27 @@ void passiveRecoilCompensation() { //
 			primaryEnabled = false;
 			Sleep(200);
 		}
-
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
+		/*
+				while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled && !primaryEnabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			for (int i = 0; i < 15; i++) {
-				Sleep(20);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 10, 0, 0);
+			for (int i = 0; i < 10; i++) {
+				Sleep(17);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
 			}
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 			Sleep(10);
 		}
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled && !primaryEnabled) {
+		*/
+
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			Sleep(6);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0);
-			Sleep(98);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0);
+			Sleep(33);
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(6);
+			Sleep(33);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 20, 0, 0);
+			Sleep(33);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0);
+			Sleep(33);
 		}
 		Sleep(1);
 	}
