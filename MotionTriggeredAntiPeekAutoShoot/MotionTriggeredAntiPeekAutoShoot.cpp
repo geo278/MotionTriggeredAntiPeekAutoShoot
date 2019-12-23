@@ -82,63 +82,27 @@ void passiveRecoilCompensation() { //
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while (1) {
-		/*
-				if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled) {
-					Sleep(10);
-					mouse_event(MOUSEEVENTF_MOVE, 0, 3, 0, 0);
-				}
-
-				// machine pistol
-				if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && primaryEnabled) {
-					SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-					Sleep(9);
-					mouse_event(MOUSEEVENTF_MOVE, 0, 16, 0, 0);
-					for (int i = 0; i < 9; i++) {
-						Sleep(19);
-						mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
-					}
-					SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-					Sleep(5);
-				}
-				if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && enabled && !primaryEnabled) {
-					SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-					for (int i = 0; i < 10; i++) {
-						Sleep(11);
-						mouse_event(MOUSEEVENTF_MOVE, 0, 4, 0, 0);
-					}
-					SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-					Sleep(5);
-				}
-		*/
-		if ((GetKeyState(0x31) & 0x100) != 0) {
-			primaryEnabled = true;
-			Sleep(200);
-		}
-		if ((GetKeyState(0x32) & 0x100) != 0) {
-			primaryEnabled = false;
-			Sleep(200);
-		}
-		/*
-				while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled && !primaryEnabled) {
+		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			for (int i = 0; i < 10; i++) {
-				Sleep(17);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 8, 0, 0);
+			for (int i = 0; i < 4; i++) {
+				Sleep(20);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 40, 0, 0);
 			}
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(10);
-		}
-		*/
-
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
+			Sleep(40);
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			Sleep(10);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 25, 0, 0);
-			Sleep(15);
+			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
+				Sleep(20);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 45, 0, 0);
+			}
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(15);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 20, 0, 0);
-			Sleep(60);
+		}
+		if ((GetKeyState(VK_LBUTTON) & 0x100) != 0 && enabled) {
+			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
+				Sleep(20);
+			}
+			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 		}
 		Sleep(1);
 	}
