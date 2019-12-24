@@ -83,20 +83,10 @@ void passiveRecoilCompensation() { //
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while (1) {
 		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
-			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			for (int i = 0; i < 4; i++) {
-				Sleep(10);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 25, 0, 0);
-			}
-			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(40);
-			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
-				Sleep(20);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 45, 0, 0);
-			}
-			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			Sleep(10);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 15, 0, 0);
 		}
+		/*
 		if ((GetKeyState(VK_LBUTTON) & 0x100) != 0 && enabled) {
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
 			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
@@ -104,6 +94,8 @@ void passiveRecoilCompensation() { //
 			}
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 		}
+		*/
+
 		Sleep(1);
 	}
 }
