@@ -183,7 +183,7 @@ void passiveLeaning() {
 
 void trackEnabled() {
 	while (1) {
-		while ((GetKeyState(VK_MENU) & 0x100) != 0) {
+		while ((GetKeyState(VK_F1) & 0x100) != 0) {
 			enabled = !enabled;
 			Sleep(200);
 		}
@@ -194,7 +194,7 @@ void trackEnabled() {
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
-	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT a, b;
 	a.x = screenWidth / 2 - width / 2;
