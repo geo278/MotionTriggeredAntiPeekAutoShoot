@@ -90,7 +90,7 @@ void passiveRecoilCompensation() { //
 			}
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
 			Sleep(40);
-			if ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {break;}
+			if ((GetKeyState(VK_LBUTTON) & 0x100) == 0) {break;}
 			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
 			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
 				Sleep(20);
