@@ -12,6 +12,7 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 6;
 int height = 6;
 bool enabled = true;
+int recoil = 2;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -82,20 +83,33 @@ void passiveRecoilCompensation() { //
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while (1) {
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
-			Sleep(10);
-			mouse_event(MOUSEEVENTF_MOVE, 0, 5, 0, 0);
-		}
-		/*
-		if ((GetKeyState(VK_LBUTTON) & 0x100) != 0 && enabled) {
-			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+		// Full-auto COF minimization macro
+		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
 			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
+				SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+				for (int i = 0; i < 9; i++) {
+					Sleep(20);
+					mouse_event(MOUSEEVENTF_MOVE, 0, 7 * recoil, 0, 0);
+					if ((GetKeyState(VK_LBUTTON) & 0x100) == 0) {
+						break;
+					}
+				}
+				SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+				Sleep(10);
+			}
+		}
+
+		/*
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
+			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			for (int i = 0; i < 5; i++) {
 				Sleep(20);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 8 * recoil, 0, 0);
 			}
 			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			Sleep(10);
 		}
 		*/
-
 		Sleep(1);
 	}
 }
@@ -175,10 +189,19 @@ void passiveLeaning() {
 void trackEnabled() {
 	while (1) {
 		while ((GetKeyState(VK_F1) & 0x100) != 0) {
-			enabled = !enabled;
-			Sleep(200);
+			recoil = 1;
+			cout << "Low Recoil" << endl << endl;
 		}
-		Sleep(2);
+		while ((GetKeyState(VK_F2) & 0x100) != 0) {
+			recoil = 2;
+			cout << "High Recoil" << endl << endl;
+		}
+		while ((GetKeyState(VK_F3) & 0x100) != 0) {
+			enabled = !enabled;
+		}
+		screenWidth = GetSystemMetrics(SM_CXSCREEN);
+		screenHeight = GetSystemMetrics(SM_CYSCREEN);
+		Sleep(100);
 	}
 }
 
@@ -188,11 +211,6 @@ int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 
 	POINT a, b;
-	a.x = screenWidth / 2 - width / 2;
-	a.y = screenHeight / 2 - height / 2;
-	b.x = screenWidth / 2 + width / 2;
-	b.y = screenHeight / 2 + height / 2;
-
 	RGBQUAD* prev;
 	RGBQUAD* curr;
 	int preScanCount = 20;
@@ -200,6 +218,10 @@ int main() {
 	while (1) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
 			cout << "Activate motion trigger" << endl;
+			a.x = screenWidth / 2 - width / 2;
+			a.y = screenHeight / 2 - height / 2;
+			b.x = screenWidth / 2 + width / 2;
+			b.y = screenHeight / 2 + height / 2;
 			prev = scan(a, b);
 			while ((GetKeyState(VK_CONTROL) & 0x100) != 0) {
 				curr = scan(a, b);
