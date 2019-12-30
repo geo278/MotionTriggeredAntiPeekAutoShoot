@@ -205,10 +205,19 @@ void trackEnabled() {
 	}
 }
 
+void recoilInput() {
+	while (1) {
+		cout << "Enter number to change recoil value (2 is default): ";
+		cin	>> recoil;
+		Sleep(1000);
+	}
+}
+
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) recoilInput, 0, 0, 0);
 
 	POINT a, b;
 	RGBQUAD* prev;
