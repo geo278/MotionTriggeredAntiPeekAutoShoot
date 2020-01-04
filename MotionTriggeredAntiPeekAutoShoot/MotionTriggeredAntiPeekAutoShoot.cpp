@@ -12,7 +12,7 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 6;
 int height = 6;
 bool enabled = true;
-int recoil = 2;
+int recoil = 3;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -22,6 +22,14 @@ RGBQUAD* scan(POINT a, POINT b) {
 	HGDIOBJ old_obj = SelectObject(hDC, hBitmap);
 	BOOL    bRet = BitBlt(hDC, 0, 0, abs(b.x - a.x), abs(b.y - a.y), hScreen, a.x, a.y, SRCCOPY); // BitBlt performs copying
 
+	/*
+	// save bitmap to clipboard for testing
+	OpenClipboard(NULL);
+	EmptyClipboard();
+	SetClipboardData(CF_BITMAP, hBitmap);
+	CloseClipboard();
+	*/
+	
 	// Array conversion:
 	RGBQUAD* pixels = new RGBQUAD[width * height];
 
@@ -87,9 +95,9 @@ void passiveRecoilCompensation() { //
 		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
 			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
 				SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-				for (int i = 0; i < 9; i++) {
+				for (int i = 0; i < 8; i++) {
 					Sleep(20);
-					mouse_event(MOUSEEVENTF_MOVE, 0, 7 * recoil, 0, 0);
+					mouse_event(MOUSEEVENTF_MOVE, 0, 6 * recoil, 0, 0);
 					if ((GetKeyState(VK_LBUTTON) & 0x100) == 0) {
 						break;
 					}
@@ -152,62 +160,71 @@ void passiveLeaning() {
 	while (1) {
 		if (((GetKeyState(VK_SHIFT) & 0x100) != 0) && ((GetKeyState(0x41) & 0x100) != 0) && enabled) { // A key cuases left lean
 			SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			//SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
 			Sleep(20);
 			SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
 			while (((GetKeyState(0x41) & 0x100) != 0)) {
 				Sleep(20);
 			}
-			//SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
-//
-			//SendInput(1, &_VK_NUMPAD1_keyDown, sizeof(INPUT));
-			//SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
-			//Sleep(250);
-			//SendInput(1, &_VK_NUMPAD1_keyUp, sizeof(INPUT));
-			//SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
 		}
 		if (((GetKeyState(VK_SHIFT) & 0x100) != 0) && ((GetKeyState(0x44) & 0x100) != 0) && enabled) { // D key cuases left lean
 			SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			//SendInput(1, &_VK_NUMPAD5_keyDown, sizeof(INPUT));
 			Sleep(20);
 			SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
 			while (((GetKeyState(0x44) & 0x100) != 0)) {
 				Sleep(20);
 			}
-			//SendInput(1, &_VK_NUMPAD5_keyUp, sizeof(INPUT));
-//
-			//SendInput(1, &_VK_NUMPAD2_keyDown, sizeof(INPUT));
-			//SendInput(1, &_VK_NUMPAD4_keyDown, sizeof(INPUT));
-			//Sleep(250);
-			//SendInput(1, &_VK_NUMPAD2_keyUp, sizeof(INPUT));
-			//SendInput(1, &_VK_NUMPAD4_keyUp, sizeof(INPUT));
+
 		}
 		Sleep(1);
 	}
 }
 
+void passiveADS() {
+	INPUT _VK_F1_keyDown;
+	_VK_F1_keyDown.type = INPUT_KEYBOARD;
+	_VK_F1_keyDown.ki.wScan = MapVirtualKey(VK_F1, MAPVK_VK_TO_VSC); // hardware scan code
+	_VK_F1_keyDown.ki.time = 0;
+	_VK_F1_keyDown.ki.wVk = VK_F1; // virtual-key code
+	_VK_F1_keyDown.ki.dwExtraInfo = 0;
+	_VK_F1_keyDown.ki.dwFlags = 0; // 0 for key down
+	INPUT _VK_F1_keyUp = _VK_F1_keyDown;
+	_VK_F1_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
+	while (1) {
+		if ((GetKeyState(VK_SHIFT) & 0x100) == 0 && enabled) {
+			SendInput(1, &_VK_F1_keyDown, sizeof(INPUT));
+			while ((GetKeyState(VK_SHIFT) & 0x100) == 0 && enabled) {
+				Sleep(20);
+			}
+			SendInput(1, &_VK_F1_keyUp, sizeof(INPUT));
+		}
+		Sleep(10);
+	}
+}
+
 void trackEnabled() {
 	while (1) {
-		while ((GetKeyState(VK_F1) & 0x100) != 0) {
-			recoil = 1;
-			cout << "Low Recoil" << endl << endl;
-		}
-		while ((GetKeyState(VK_F2) & 0x100) != 0) {
-			recoil = 2;
-			cout << "High Recoil" << endl << endl;
-		}
-		while ((GetKeyState(VK_F3) & 0x100) != 0) {
+		if ((GetKeyState(VK_F3) & 0x100) != 0) {
 			enabled = !enabled;
+			Sleep(500);
 		}
+	}
+}
+
+void trackResolution() {
+	while (1) {
 		screenWidth = GetSystemMetrics(SM_CXSCREEN);
 		screenHeight = GetSystemMetrics(SM_CYSCREEN);
-		Sleep(100);
+		if (screenWidth == 2048 && screenHeight == 1152) {
+			screenWidth = 2560;
+			screenHeight = 1440;
+		}
+		Sleep(10000);
 	}
 }
 
 void recoilInput() {
 	while (1) {
-		cout << "Enter number to change recoil value (2 is default): ";
+		cout << "Enter int to change recoil value (Current: " << recoil << ") ";
 		cin	>> recoil;
 		Sleep(1000);
 	}
@@ -215,8 +232,10 @@ void recoilInput() {
 
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
-	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveADS, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
+	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackResolution, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) recoilInput, 0, 0, 0);
 
 	POINT a, b;
@@ -226,7 +245,7 @@ int main() {
 
 	while (1) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
-			cout << "Activate motion trigger" << endl;
+			cout << endl << "Activate motion trigger" << endl;
 			a.x = screenWidth / 2 - width / 2;
 			a.y = screenHeight / 2 - height / 2;
 			b.x = screenWidth / 2 + width / 2;
@@ -245,7 +264,7 @@ int main() {
 				delete[] prev;
 				prev = curr;
 			}
-			cout << "Release motion trigger" << endl << endl;
+			cout << "Release motion trigger" << endl;
 		}
 		Sleep(2);
 	}
