@@ -12,7 +12,7 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 6;
 int height = 6;
 bool enabled = true;
-int recoil = 3;
+int recoil = 4;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -91,13 +91,14 @@ void passiveRecoilCompensation() { //
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while (1) {
+
 		// Full-auto COF minimization macro
 		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
 			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
 				SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
 				for (int i = 0; i < 8; i++) {
 					Sleep(20);
-					mouse_event(MOUSEEVENTF_MOVE, 0, 6 * recoil, 0, 0);
+					mouse_event(MOUSEEVENTF_MOVE, 0, 4 * recoil, 0, 0);
 					if ((GetKeyState(VK_LBUTTON) & 0x100) == 0) {
 						break;
 					}
@@ -106,18 +107,20 @@ void passiveRecoilCompensation() { //
 				Sleep(10);
 			}
 		}
-
 		/*
-		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
-			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			for (int i = 0; i < 5; i++) {
-				Sleep(20);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 8 * recoil, 0, 0);
+				if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
+			//SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			for (int i = 0; i < 10; i++) {
+				Sleep(10);
+				mouse_event(MOUSEEVENTF_MOVE, 0, 166, 0, 0);
 			}
-			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			Sleep(10);
+			//SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
+				Sleep(10);
+			}
 		}
 		*/
+
 		Sleep(1);
 	}
 }
@@ -190,9 +193,9 @@ void passiveADS() {
 	INPUT _VK_F1_keyUp = _VK_F1_keyDown;
 	_VK_F1_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while (1) {
-		if ((GetKeyState(VK_SHIFT) & 0x100) == 0 && enabled) {
+		if ((GetKeyState(VK_SHIFT) & 0x100) != 0 && enabled) {
 			SendInput(1, &_VK_F1_keyDown, sizeof(INPUT));
-			while ((GetKeyState(VK_SHIFT) & 0x100) == 0 && enabled) {
+			while ((GetKeyState(VK_SHIFT) & 0x100) != 0 && enabled) {
 				Sleep(20);
 			}
 			SendInput(1, &_VK_F1_keyUp, sizeof(INPUT));
@@ -232,8 +235,8 @@ void recoilInput() {
 
 int main() {
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveRecoilCompensation, 0, 0, 0);
-	//CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
-	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveADS, 0, 0, 0);
+	// CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveLeaning, 0, 0, 0);
+	// CreateThread(0, 0, (LPTHREAD_START_ROUTINE) passiveADS, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackEnabled, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) trackResolution, 0, 0, 0);
 	CreateThread(0, 0, (LPTHREAD_START_ROUTINE) recoilInput, 0, 0, 0);
@@ -242,7 +245,7 @@ int main() {
 	RGBQUAD* prev;
 	RGBQUAD* curr;
 	int preScanCount = 20;
-
+	
 	while (1) {
 		if ((GetKeyState(VK_CONTROL) & 0x100) != 0) { // while ctrl pressed
 			cout << endl << "Activate motion trigger" << endl;
@@ -268,5 +271,6 @@ int main() {
 		}
 		Sleep(2);
 	}
+	
 	return 0;
 }
