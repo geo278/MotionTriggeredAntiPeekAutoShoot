@@ -12,7 +12,7 @@ int screenHeight = GetSystemMetrics(SM_CYSCREEN);
 int width = 6;
 int height = 6;
 bool enabled = true;
-int recoil = 4;
+int recoil = 3;
 
 RGBQUAD* scan(POINT a, POINT b) {
 	// copy screen to bitmap
@@ -91,7 +91,7 @@ void passiveRecoilCompensation() { //
 	INPUT _VK_NUMPAD0_keyUp = _VK_NUMPAD0_keyDown;
 	_VK_NUMPAD0_keyUp.ki.dwFlags = KEYEVENTF_KEYUP;
 	while (1) {
-
+		
 		// Full-auto COF minimization macro
 		if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
 			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
@@ -107,19 +107,18 @@ void passiveRecoilCompensation() { //
 				Sleep(10);
 			}
 		}
-		/*
-				if (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
-			//SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
-			for (int i = 0; i < 10; i++) {
-				Sleep(10);
-				mouse_event(MOUSEEVENTF_MOVE, 0, 166, 0, 0);
-			}
-			//SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
-			while ((GetKeyState(VK_LBUTTON) & 0x100) != 0) {
-				Sleep(10);
-			}
+		
+/*
+		// DMR/SSG
+		while (((GetKeyState(VK_LBUTTON) & 0x100) != 0) && ((GetKeyState(VK_RBUTTON) & 0x100) != 0) && enabled) {
+			SendInput(1, &_VK_NUMPAD0_keyDown, sizeof(INPUT));
+			Sleep(10);
+			mouse_event(MOUSEEVENTF_MOVE, 0, 10 * recoil, 0, 0);
+			Sleep(90);
+			SendInput(1, &_VK_NUMPAD0_keyUp, sizeof(INPUT));
+			Sleep(10);
 		}
-		*/
+*/
 
 		Sleep(1);
 	}
@@ -206,6 +205,16 @@ void passiveADS() {
 
 void trackEnabled() {
 	while (1) {
+		if ((GetKeyState(VK_F1) & 0x100) != 0) {
+			recoil = 5;
+			cout << "Recoil change to 5" << endl;
+			Sleep(500);
+		}
+		if ((GetKeyState(VK_F2) & 0x100) != 0) {
+			recoil = 12;
+			cout << "Temp recoil change to 12" << endl;
+			Sleep(500);
+		}
 		if ((GetKeyState(VK_F3) & 0x100) != 0) {
 			enabled = !enabled;
 			Sleep(500);
